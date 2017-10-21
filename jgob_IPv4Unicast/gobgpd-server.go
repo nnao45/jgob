@@ -75,6 +75,7 @@ func JgobServer(receivedCmd chan Announce) {
 			attrs := []bgp.PathAttributeInterface{
 				bgp.NewPathAttributeOrigin(r.ORIGIN),
 				bgp.NewPathAttributeNextHop(r.NEXTHOP),
+				bgp.NewPathAttributeCommunities(r.COMMUNITIES),
 				bgp.NewPathAttributeAsPath([]bgp.AsPathParamInterface{bgp.NewAs4PathParam(bgp.BGP_ASPATH_ATTR_TYPE_SEQ, r.ASPATH)}),
 			}
 			if _, err := s.AddPath("", []*table.Path{table.NewPath(nil, bgp.NewIPAddrPrefix(r.CIDR, r.ADDRESS), false, attrs, time.Now(), false)}); err != nil {

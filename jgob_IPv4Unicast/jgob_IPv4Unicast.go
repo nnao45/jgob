@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
 	"encoding/json"
 	"fmt"
+	"github.com/joho/godotenv"
 	"io"
-	"io/ioutil"
+//	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -14,11 +14,46 @@ import (
 )
 
 type Announce struct {
-	ORIGIN  uint8    `json:"origin"`  //bgp origin-as attr.
-	NEXTHOP string   `json:"nexthop"` //bgp nexthop attr.
-	ASPATH  []uint32 `json:"aspath"`  //bgp as-path attr.
-	ADDRESS string   `json:"address"` //bgp announce prefix of address.
-	CIDR    uint8    `json:"cidr"`    //bgp announce prefix of cidr.
+	ORIGIN      uint8    `json:"origin"`      //bgp origin-as attr.
+	NEXTHOP     string   `json:"nexthop"`     //bgp nexthop attr.
+	ASPATH      []uint32 `json:"aspath"`      //bgp as-path attr.
+	COMMUNITIES []uint32 `json:"communities"` //bgp communities attr.
+	ADDRESS     string   `json:"address"`     //bgp announce prefix of address.
+	CIDR        uint8    `json:"cidr"`        //bgp announce prefix of cidr.
+}
+
+const (
+	COMMUNITY_INTERNET					= 0x00000000
+	COMMUNITY_PLANNED_SHUT                                  = 0xffff0000
+	COMMUNITY_ACCEPT_OWN                                    = 0xffff0001
+	COMMUNITY_ROUTE_FILTER_TRANSLATED_v4                    = 0xffff0002
+	COMMUNITY_ROUTE_FILTER_v4                               = 0xffff0003
+	COMMUNITY_ROUTE_FILTER_TRANSLATED_v6                    = 0xffff0004
+	COMMUNITY_ROUTE_FILTER_v6                               = 0xffff0005
+	COMMUNITY_LLGR_STALE                                    = 0xffff0006
+	COMMUNITY_NO_LLGR                                       = 0xffff0007
+	COMMUNITY_BLACKHOLE                                     = 0xffff029a
+	COMMUNITY_NO_EXPORT                                     = 0xffffff01
+	COMMUNITY_NO_ADVERTISE                                  = 0xffffff02
+	COMMUNITY_NO_EXPORT_SUBCONFED                           = 0xffffff03
+	COMMUNITY_NO_PEER                                       = 0xffffff04
+)
+
+var WellKnownCommunityNameMap = map[string]uint32{
+	"internet":                   COMMUNITY_INTERNET,
+	"planned-shut":               COMMUNITY_PLANNED_SHUT,
+	"accept-own":                 COMMUNITY_ACCEPT_OWN,
+	"route-filter-translated-v4": COMMUNITY_ROUTE_FILTER_TRANSLATED_v4,
+	"route-filter-v4":            COMMUNITY_ROUTE_FILTER_v4,
+	"route-filter-translated-v6": COMMUNITY_ROUTE_FILTER_TRANSLATED_v6,
+	"route-filter-v6":            COMMUNITY_ROUTE_FILTER_v6,
+	"llgr-stale":                 COMMUNITY_LLGR_STALE,
+	"no-llgr":                    COMMUNITY_NO_LLGR,
+	"blackhole":                  COMMUNITY_BLACKHOLE,
+	"no-export":                  COMMUNITY_NO_EXPORT,
+	"no-advertise":               COMMUNITY_NO_ADVERTISE,
+	"no-export-subconfed":        COMMUNITY_NO_EXPORT_SUBCONFED,
+	"no-peer":                    COMMUNITY_NO_PEER,
 }
 
 func Env_load() {
@@ -37,18 +72,18 @@ func main() {
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
-			w.Header().Set("WWW-Authenticate", `Basic realm="MY REALM"`)
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 			return
 		} else {
-			w.Write([]byte("API is up and running\n"))
+			w.Write([]byte("JGOB is up and running\n"))
 		}
 	})
 
 	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
-			w.Header().Set("WWW-Authenticate", `Basic realm="MY REALM"`)
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 			return
@@ -88,18 +123,16 @@ func main() {
 			}
 
 			var res Announce
-			var resOriginBufUint8 uint8
 
 			if jsonBody["origin"] == "igp" {
-				resOriginBufUint8 = 0
+				res.ORIGIN = 0
 			} else if jsonBody["origin"] == "egp" {
-				resOriginBufUint8 = 1
+				res.ORIGIN = 1
 			} else if jsonBody["origin"] == "incomplete" {
-				resOriginBufUint8 = 2
+				res.ORIGIN = 2
 			} else {
-				resOriginBufUint8 = 2
+				res.ORIGIN = 2
 			}
-			res.ORIGIN = resOriginBufUint8
 
 			res.NEXTHOP = jsonBody["nexthop"]
 
@@ -118,6 +151,31 @@ func main() {
 					fmt.Printf("error6: %s\n", err)
 				}
 				res.ASPATH = append(res.ASPATH, uint32(resAspathBufInt))
+			}
+
+			if strings.Contains(jsonBody["communities"], " ") {
+				resCommunitiesAry := strings.Split(jsonBody["communities"], " ")
+				for _, s := range resCommunitiesAry {
+					if n, ok := WellKnownCommunityNameMap[s]; ok {
+						res.COMMUNITIES = append(res.COMMUNITIES, n)
+					} else {
+						sInt, err := strconv.Atoi(s)
+						if err != nil {
+							fmt.Printf("error6: %s\n", err)
+						}
+						res.COMMUNITIES = append(res.COMMUNITIES, 0xffff&uint32(sInt))
+					}
+				}
+			} else {
+				if n, ok := WellKnownCommunityNameMap[jsonBody["communities"]]; ok {
+					res.COMMUNITIES = append(res.COMMUNITIES, n)
+				} else {
+					sInt, err := strconv.Atoi(jsonBody["communities"])
+					if err != nil {
+						fmt.Printf("error6: %s\n", err)
+					}
+					res.COMMUNITIES = append(res.COMMUNITIES, 0xffff&uint32(sInt))
+				}
 			}
 
 			res.ADDRESS = jsonBody["address"]
@@ -148,11 +206,3 @@ func checkAuth(r *http.Request) bool {
 	return username == os.Getenv("USERNAME") && password == os.Getenv("PASSWORD")
 }
 
-func execute(resp *http.Request) string {
-	// Getting request body as string.
-	b, err := ioutil.ReadAll(resp.Body)
-	if err == nil {
-		return string(b)
-	}
-	return ""
-}

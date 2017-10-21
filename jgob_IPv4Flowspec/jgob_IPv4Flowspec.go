@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
 	"github.com/joho/godotenv"
 	"io"
@@ -133,8 +132,6 @@ func main() {
                         }
 
 			res = res + strings.Join(resAry, " ")
-
-			fmt.Println(res)
 
 			a <- res
 

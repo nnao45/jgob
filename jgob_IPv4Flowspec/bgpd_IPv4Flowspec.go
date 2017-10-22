@@ -211,16 +211,15 @@ func showRouteToItem(pathList []*table.Path) string {
 	maxNexthopLen := 20
 	var sum string
 
-	now := time.Now()
+	//now := time.Now()
 	for _, p := range pathList {
 		nexthop := "fictitious"
 		if n := p.GetNexthop(); n != nil {
 			nexthop = p.GetNexthop().String()
 		}
 
-		s := make([]string, 0, 5)
+		attr := make([]string, 0, 5)
 		aspath := make([]string, 0, 5)
-		aspath = append(aspath, "AsPath:")
 		for _, a := range p.GetPathAttrs() {
 			switch a.GetType() {
 			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI:
@@ -228,37 +227,60 @@ func showRouteToItem(pathList []*table.Path) string {
 			case bgp.BGP_ATTR_TYPE_AS_PATH, bgp.BGP_ATTR_TYPE_AS4_PATH:
 				aspath = append(aspath, a.String())
 			default:
-				s = append(s, a.String())
+				attr = append(attr, a.String())
 			}
 		}
-		pattrstr := fmt.Sprint(s)
+
+		apStr := strings.Replace(strings.Join(aspath, " "), " ", ",", -1)
+
+		apStr = `"aspath":"` + apStr + `", `
+
+		var attrStr string
+		for _, s := range attr {
+			s = strings.ToLower(s)
+			if strings.Contains(s, "extcomms") && strings.Contains(s, "rate"){
+				s = strings.Replace(s, "{extcomms: [rate: ", `"extcomms":"`, 1)
+				s = strings.Replace(s, "]}", `",`, -1)
+			} else if strings.Contains(s, "extcomms") && strings.Contains(s, "discard"){
+				s = strings.Replace(s, "{extcomms: [", `"extcomms":"`, 1)
+				s = strings.Replace(s, "]}", `",`, -1)
+			} else {
+				s = strings.Replace(s, ":", `":"`, -1)
+				s = strings.Replace(s, "{", `"`, -1)
+				s = strings.Replace(s, "}", `", `, -1)
+			}
+			attrStr = attrStr + s
+		}
 
 		if maxNexthopLen < len(nexthop) {
 			maxNexthopLen = len(nexthop)
 		}
 
 		nlri := p.GetNlri()
-/*		var nlriAry []string
+		var nlriAry []string
 		var nlriStr string
 		nlriAry = strings.Split(nlri.String(), "]")
 		for _, s := range nlriAry {
-			nlriStr = nlriStr + strings.Trim(s, "[") + " "
+			if s != "" {
+				nlriStr = nlriStr +  strings.Replace(s, "[", `"`, -1) + `", `
+			}
 		}
-*/
+		nlriStr = strings.Replace(nlriStr, ":", `":"`, -1)
+
 		if maxPrefixLen < len(nlri.String()) {
 			maxPrefixLen = len(nlri.String())
 		}
 
-		nexthop = "[Nexthop:" + nexthop + "]"
+		//nexthop = "[Nexthop:" + nexthop + "]"
 
-		age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+		//age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
 
-		age = "[Age:" + age + "]"
+		//age = "[Age:" + age + "]"
 
-		uuid := "[UUID:" + p.UUID().String() + "]"
+		uuid := `"uuid":"` + p.UUID().String() + `"`
 
 		// fill up the tree with items
-		str := fmt.Sprintf("%s %s %s %s %s %s\n", nlri.String(), nexthop, aspath, age, pattrstr, uuid)
+		str := fmt.Sprintf("{%s %s %s %s}\n", nlriStr, apStr, attrStr, uuid)
 		sum = sum + str
 	}
 	return sum

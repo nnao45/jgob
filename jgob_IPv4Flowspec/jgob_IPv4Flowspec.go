@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"github.com/joho/godotenv"
 	"io"
 	"log"
@@ -22,9 +22,9 @@ func addog(text string, filename string) {
 	writer = bufio.NewWriter(f)
 	writer.Write(data)
 	writer.Flush()
-	 if err != nil {
-                fmt.Println(err)
-        }
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer f.Close()
 }
 
@@ -131,37 +131,45 @@ func main() {
 
 			resAry := make([]string, 0, 20)
 
-			if jsonBody["proto"] == "tcp" || jsonBody["proto"] == "udp" || jsonBody["proto"] == "icmp" {
-				s := "protocol " + jsonBody["proto"]
+			if jsonBody["protocol"] == "tcp" || jsonBody["protocol"] == "udp" || jsonBody["protocol"] == "icmp" {
+				s := "protocol " + jsonBody["protocol"]
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["src-ip"] != "" {
-				s := "source " + jsonBody["src-ip"]
+			if jsonBody["source"] != "" {
+				s := "source " + jsonBody["source"]
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["dst-ip"] != "" {
-				s := "destination " + jsonBody["dst-ip"]
+			if jsonBody["destination"] != "" {
+				s := "destination " + jsonBody["destination"]
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["src-port"] != "" {
-				s := "source-port " + `==` + jsonBody["src-port"] + ""
+			if jsonBody["source-port"] != "" {
+				s := "source-port " + jsonBody["source-port"] + ""
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["dst-port"] != "" {
-				s := "destination-port " + `==` + jsonBody["dst-port"] + ""
+			if jsonBody["destination-port"] != "" {
+				s := "destination-port " + jsonBody["destination-port"] + ""
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["action"] == "accept" || jsonBody["action"] == "discard" {
-				s := "then " + jsonBody["action"]
+			if jsonBody["extcomms"] == "accept" || jsonBody["extcomms"] == "discard" {
+				s := "then " + jsonBody["extcomms"]
 				resAry = append(resAry, s)
-			} else if jsonBody["rate-limit"] != "" {
-				s := "then rate-limit " + jsonBody["rate-limit"]
+			} else if jsonBody["extcomms"] != "" {
+				s := "then rate-limit " + jsonBody["extcomms"]
 				resAry = append(resAry, s)
+			}
+
+			if jsonBody["origin"] == " i" {
+				jsonBody["origin"] = "igp"
+			} else if jsonBody["origin"] == " e" {
+				jsonBody["origin"] = "egp"
+			} else if jsonBody["origin"] == " ?" {
+				jsonBody["origin"] = "incomplete"
 			}
 
 			if jsonBody["origin"] == "igp" || jsonBody["origin"] == "egp" || jsonBody["origin"] == "incomplete" {
@@ -180,7 +188,6 @@ func main() {
 			}
 
 			res = res + strings.Join(resAry, " ")
-
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
@@ -188,63 +195,62 @@ func main() {
 	})
 
 	http.HandleFunc("/del", func(w http.ResponseWriter, r *http.Request) {
-                if checkAuth(r) == false {
-                        w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
-                        w.WriteHeader(401)
-                        w.Write([]byte("401 Unauthorized\n"))
-                        return
-                } else {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+			return
+		} else {
 
-                        if r.Method != "POST" {
-                                w.WriteHeader(http.StatusBadRequest)
-                                return
-                        }
+			if r.Method != "POST" {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
-                        if r.Header.Get("Content-Type") != "application/json" {
-                                w.WriteHeader(http.StatusBadRequest)
-                                return
-                        }
+			if r.Header.Get("Content-Type") != "application/json" {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 
-                        //To allocate slice for request body
-                        length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-                        if err != nil {
-                                w.WriteHeader(http.StatusInternalServerError)
-                                return
-                        }
+			//To allocate slice for request body
+			length, err := strconv.Atoi(r.Header.Get("Content-Length"))
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 
-                        //Read body data to parse json
-                        body := make([]byte, length)
-                        length, err = r.Body.Read(body)
-                        if err != nil && err != io.EOF {
-                                w.WriteHeader(http.StatusInternalServerError)
-                                return
-                        }
+			//Read body data to parse json
+			body := make([]byte, length)
+			length, err = r.Body.Read(body)
+			if err != nil && err != io.EOF {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 
 			t := time.Now()
-                        tf := t.Format("2006-01-02 15:04:05.000")
-                        logtf := "[" + tf + "](DELETE) '" + string(body[:length]) + "'\n"
-                        addog(logtf, "jgob.log")
+			tf := t.Format("2006-01-02 15:04:05.000")
+			logtf := "[" + tf + "](DELETE) '" + string(body[:length]) + "'\n"
+			addog(logtf, "jgob.log")
 
-                        //parse json
-                        var jsonBody map[string]string
-                        err = json.Unmarshal(body[:length], &jsonBody)
-                        if err != nil {
-                                w.WriteHeader(http.StatusInternalServerError)
-                                return
-                        }
+			//parse json
+			var jsonBody map[string]string
+			err = json.Unmarshal(body[:length], &jsonBody)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 
 			var res string
 
 			if jsonBody["uuid"] != "" {
 				res = jsonBody["uuid"]
-                        }
+			}
 
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
 		}
 	})
-
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

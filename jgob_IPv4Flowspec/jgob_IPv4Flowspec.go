@@ -39,7 +39,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/show", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
                 if checkAuth(r) == false {
                         w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
                         w.WriteHeader(401)

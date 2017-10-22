@@ -1,21 +1,32 @@
 package main
 
 import (
-	"strings"
+	"os"
+	"io/ioutil"
 	"context"
 	"fmt"
 	api "github.com/osrg/gobgp/api"
 	"github.com/osrg/gobgp/config"
+	"github.com/osrg/gobgp/gobgp/cmd"
 	"github.com/osrg/gobgp/packet/bgp"
 	gobgp "github.com/osrg/gobgp/server"
 	"github.com/osrg/gobgp/table"
 	log "github.com/sirupsen/logrus"
-	"time"
 	"google.golang.org/grpc"
-	"github.com/osrg/gobgp/gobgp/cmd"
+	"strings"
+	"time"
+	"github.com/satori/go.uuid"
 )
 
-func JgobServer(achan chan string, schan chan struct{}, rchan chan string) {
+func dog(text string, filename string) {
+	text_data := []byte(text)
+	err := ioutil.WriteFile(filename, text_data, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func JgobServer(achan, schan, rchan chan string) {
 	log.SetLevel(log.DebugLevel)
 	s := gobgp.NewBgpServer()
 	go s.Serve()
@@ -71,19 +82,36 @@ func JgobServer(achan chan string, schan chan struct{}, rchan chan string) {
 		select {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
-			_, err := PushNewFlowSpecPath(client, c, "IPv4")
-			if err != nil{
-				panic(err)
+			if strings.Contains(c, "match"){
+				_, err := pushNewFlowSpecPath(client, c, "IPv4")
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				err := deleteFlowSpecPath(client, c)
+				if err != nil {
+                                        log.Fatal(err)
+                                }
 			}
-		case <- schan:
-			client := api.NewGobgpApiClient(conn)
-			rchan <- ShowFlowSpecRib(client)
+			dog(showFlowSpecRib(client), "jdog.log")
+		case req := <-schan:
+			switch req {
+				case "route":
+					client := api.NewGobgpApiClient(conn)
+					rchan <- showFlowSpecRib(client)
+				case "nei":
+					client := api.NewGobgpApiClient(conn)
+					var rsum string
+					for _, s := range showBgpNeighbor(client) {
+					rsum = rsum + s
+					}
+					rchan <- rsum
+			}
 		}
 	}
 }
 
-
-func PushNewFlowSpecPath(client api.GobgpApiClient, myCommand string, myAddrFam string) ([]byte, error) {
+func pushNewFlowSpecPath(client api.GobgpApiClient, myCommand string, myAddrFam string) ([]byte, error) {
 	if myAddrFam == "IPv4" {
 		path, _ := cmd.ParsePath(bgp.RF_FS_IPv4_UC, strings.Split(myCommand, " "))
 		return (addFlowSpecPath(client, []*table.Path{path}))
@@ -94,7 +122,6 @@ func PushNewFlowSpecPath(client api.GobgpApiClient, myCommand string, myAddrFam 
 	}
 	return nil, nil
 }
-
 
 func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte, error) {
 	vrfID := ""
@@ -114,7 +141,33 @@ func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte,
 	return uuid, nil
 }
 
-func ShowFlowSpecRib(client api.GobgpApiClient) string{
+func deleteFlowSpecPath(client api.GobgpApiClient, myUuid string) error {
+	byteUuid, err := uuid.FromString(myUuid)
+	if err != nil {
+		fmt.Printf("Something gone wrong with UUID converion into bytes: %s\n", err)
+	}
+	return deleteFlowSpecPathFromUuid(client, byteUuid.Bytes())
+}
+
+func deleteFlowSpecPathFromUuid(client api.GobgpApiClient, uuid []byte) error {
+	var reqs []*api.DeletePathRequest
+	var vrfID = ""
+	resource := api.Resource_GLOBAL
+	reqs = append(reqs, &api.DeletePathRequest{
+		Resource: resource,
+		VrfId:    vrfID,
+		Uuid:     uuid,
+		Family:   uint32(0),
+	})
+	for _, req := range reqs {
+		if _, err := client.DeletePath(context.Background(), req); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func showFlowSpecRib(client api.GobgpApiClient) string {
 	var dsts []*api.Destination
 	var myNativeTable *table.Table
 	var sum string
@@ -143,7 +196,7 @@ func ShowFlowSpecRib(client api.GobgpApiClient) string{
 	return sum
 }
 
-func showRouteToItem(pathList []*table.Path) string{
+func showRouteToItem(pathList []*table.Path) string {
 	maxPrefixLen := 100
 	maxNexthopLen := 20
 	var sum string
@@ -157,7 +210,7 @@ func showRouteToItem(pathList []*table.Path) string{
 
 		s := make([]string, 0, 5)
 		aspath := make([]string, 0, 5)
-		aspath = append(aspath , "AsPath:")
+		aspath = append(aspath, "AsPath:")
 		for _, a := range p.GetPathAttrs() {
 			switch a.GetType() {
 			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI:
@@ -175,7 +228,13 @@ func showRouteToItem(pathList []*table.Path) string{
 		}
 
 		nlri := p.GetNlri()
-
+/*		var nlriAry []string
+		var nlriStr string
+		nlriAry = strings.Split(nlri.String(), "]")
+		for _, s := range nlriAry {
+			nlriStr = nlriStr + strings.Trim(s, "[") + " "
+		}
+*/
 		if maxPrefixLen < len(nlri.String()) {
 			maxPrefixLen = len(nlri.String())
 		}
@@ -189,7 +248,7 @@ func showRouteToItem(pathList []*table.Path) string{
 		uuid := "[UUID:" + p.UUID().String() + "]"
 
 		// fill up the tree with items
-		str :=  fmt.Sprintf("%s %s %s %s %s %s\n", nlri.String(), nexthop, aspath, age, pattrstr, uuid)
+		str := fmt.Sprintf("%s %s %s %s %s %s\n", nlri.String(), nexthop, aspath, age, pattrstr, uuid)
 		sum = sum + str
 	}
 	return sum
@@ -213,4 +272,79 @@ func formatTimedelta(d int64) string {
 	} else {
 		return fmt.Sprintf("%dd ", days) + fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
 	}
+}
+
+func showBgpNeighbor(client api.GobgpApiClient) []string {
+	dumpResult := []string{}
+	var NeighReq api.GetNeighborRequest
+	NeighResp, e := client.GetNeighbor(context.Background(), &NeighReq)
+	if e != nil {
+		return dumpResult
+	}
+	m := NeighResp.Peers
+	maxaddrlen := 0
+	maxaslen := 0
+	maxtimelen := len("Up/Down")
+	timedelta := []string{}
+
+	// sort.Sort(m)
+
+	now := time.Now()
+	for _, p := range m {
+		if i := len(p.Conf.NeighborInterface); i > maxaddrlen {
+			maxaddrlen = i
+		} else if j := len(p.Conf.NeighborAddress); j > maxaddrlen {
+			maxaddrlen = j
+		}
+		if len(fmt.Sprint(p.Conf.PeerAs)) > maxaslen {
+			maxaslen = len(fmt.Sprint(p.Conf.PeerAs))
+		}
+		timeStr := "never"
+		if p.Timers.State.Uptime != 0 {
+			t := int64(p.Timers.State.Downtime)
+			if p.Info.BgpState == "BGP_FSM_ESTABLISHED" {
+				t = int64(p.Timers.State.Uptime)
+			}
+			timeStr = formatTimedelta(int64(now.Sub(time.Unix(int64(t), 0)).Seconds()))
+		}
+		if len(timeStr) > maxtimelen {
+			maxtimelen = len(timeStr)
+		}
+		timedelta = append(timedelta, timeStr)
+	}
+	var format string
+	format = "%-" + fmt.Sprint(maxaddrlen) + "s" + " %" + fmt.Sprint(maxaslen) + "s" + " %" + fmt.Sprint(maxtimelen) + "s"
+	format += " %-11s |%11s %8s %8s\n"
+	dumpResult = append(dumpResult, fmt.Sprintf(format, "Peer", "AS", "Up/Down", "State", "#Advertised", "Received", "Accepted"))
+	format_fsm := func(admin api.PeerState_AdminState, fsm string) string {
+		switch admin {
+		case api.PeerState_DOWN:
+			return "Idle(Admin)"
+		case api.PeerState_PFX_CT:
+			return "Idle(PfxCt)"
+		}
+
+		if fsm == "BGP_FSM_IDLE" {
+			return "Idle"
+		} else if fsm == "BGP_FSM_CONNECT" {
+			return "Connect"
+		} else if fsm == "BGP_FSM_ACTIVE" {
+			return "Active"
+		} else if fsm == "BGP_FSM_OPENSENT" {
+			return "Sent"
+		} else if fsm == "BGP_FSM_OPENCONFIRM" {
+			return "Confirm"
+		} else {
+			return "Establ"
+		}
+	}
+
+	for i, p := range m {
+		neigh := p.Conf.NeighborAddress
+		if p.Conf.NeighborInterface != "" {
+			neigh = p.Conf.NeighborInterface
+		}
+		dumpResult = append(dumpResult, fmt.Sprintf(format, neigh, fmt.Sprint(p.Conf.PeerAs), timedelta[i], format_fsm(p.Info.AdminState, p.Info.BgpState), fmt.Sprint(p.Info.Advertised), fmt.Sprint(p.Info.Received), fmt.Sprint(p.Info.Accepted)))
+	}
+	return dumpResult
 }

@@ -156,8 +156,9 @@ func showRouteToItem(pathList []*table.Path) string{
 			nexthop = p.GetNexthop().String()
 		}
 
-		s := []string{}
-		aspath := []string{"AsPath:"}
+		s := make([]string, 0, 5)
+		aspath := make([]string, 0, 5)
+		aspath = append(aspath , "AsPath:")
 		for _, a := range p.GetPathAttrs() {
 			switch a.GetType() {
 			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI:

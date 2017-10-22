@@ -15,7 +15,7 @@ import (
 	"github.com/osrg/gobgp/gobgp/cmd"
 )
 
-func JgobServer(cmdLine chan string) {
+func JgobServer(achan chan string, schan chan struct{}, rchan chan string) {
 	log.SetLevel(log.DebugLevel)
 	s := gobgp.NewBgpServer()
 	go s.Serve()
@@ -69,13 +69,16 @@ func JgobServer(cmdLine chan string) {
 
 	for {
 		select {
-		case c := <-cmdLine:
+		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
 			_, err := PushNewFlowSpecPath(client, c, "IPv4")
 			if err != nil{
 				panic(err)
 			}
-			fmt.Printf("%s\n", ShowFlowSpecRib(client))
+		case <- schan:
+			client := api.NewGobgpApiClient(conn)
+			res := fmt.Sprintf("%s", ShowFlowSpecRib(client))
+			rchan <- res
 		}
 	}
 }
@@ -154,10 +157,13 @@ func showRouteToItem(pathList []*table.Path) string{
 		}
 
 		s := []string{}
+		aspath := []string{"AsPath:"}
 		for _, a := range p.GetPathAttrs() {
 			switch a.GetType() {
-			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI, bgp.BGP_ATTR_TYPE_AS_PATH, bgp.BGP_ATTR_TYPE_AS4_PATH:
+			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI:
 				continue
+			case bgp.BGP_ATTR_TYPE_AS_PATH, bgp.BGP_ATTR_TYPE_AS4_PATH:
+				aspath = append(aspath, a.String())
 			default:
 				s = append(s, a.String())
 			}
@@ -174,9 +180,16 @@ func showRouteToItem(pathList []*table.Path) string{
 			maxPrefixLen = len(nlri.String())
 		}
 
+		nexthop = "[Nexthop:" + nexthop + "]"
+
 		age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+
+		age = "[Age:" + age + "]"
+
+		uuid := "[UUID:" + p.UUID().String() + "]"
+
 		// fill up the tree with items
-		str :=  fmt.Sprintf("%s %s %s %s %s\n", nlri.String(), pattrstr, age, nexthop, p.UUID().String())
+		str :=  fmt.Sprintf("%s %s %s %s %s %s\n", nlri.String(), nexthop, aspath, age, pattrstr, uuid)
 		sum = sum + str
 	}
 	return sum

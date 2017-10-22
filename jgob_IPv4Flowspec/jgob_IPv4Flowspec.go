@@ -22,11 +22,11 @@ func Env_load() {
 
 func main() {
 
-	a := make(chan string)
+	achan := make(chan string)
+	schan := make(chan struct{}, 0)
+	rchan := make(chan string)
 
-//	s := make(chan struct{}, 0)
-
-	go JgobServer(a)
+	go JgobServer(achan, schan, rchan)
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
@@ -46,7 +46,11 @@ func main() {
                         w.Write([]byte("401 Unauthorized\n"))
                         return
                 } else {
-                        w.Write([]byte("JGOB is up and running\n"))
+			w.Write([]byte("#################################\n"))
+                        w.Write([]byte("  show flowspec ipv4 in Gobgpd   \n"))
+			w.Write([]byte("#################################\n"))
+			schan <- struct{}{}
+			w.Write([]byte(<-rchan))
                 }
         })
 
@@ -139,14 +143,14 @@ func main() {
                                 resAry = append(resAry, s)
                         }
 
-                        if jsonBody["commuinities"] != "" {
+                        if jsonBody["community"] != "" {
                                 s := "community " + jsonBody["community"]
                                 resAry = append(resAry, s)
                         }
 
 			res = res + strings.Join(resAry, " ")
 
-			a <- res
+			achan <- res
 
 			w.WriteHeader(http.StatusOK)
 

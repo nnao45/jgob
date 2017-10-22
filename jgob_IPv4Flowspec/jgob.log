@@ -1,0 +1,6 @@
+[2017-10-22 22:22:46.883] '{"origin":"igp", "aspath":"200,300,2000", "community":"no-export", "proto":"tcp", "src-ip":"10.0.0.1/24", "dst-port":"53", "dst-ip":"20.0.0.1/24", "rate-limit":"100"}'
+[2017-10-22 22:22:51.118] '{"origin":"igp", "aspath":"200,300,2000", "community":"no-export", "proto":"tcp", "src-ip":"30.0.0.1/24", "dst-port":"53", "dst-ip":"10.0.0.1/24", "rate-limit":"100"}'
+[2017-10-22 22:24:48.467] '{"uuid":"9a9eba21-d603-4bb9-99ea-894a564b7952"}'
+[2017-10-22 22:29:01.933](ADDING) '{"origin":"igp", "aspath":"200,300,2000", "community":"no-export", "proto":"tcp", "src-ip":"30.0.0.1/24", "dst-port":"53", "dst-ip":"10.0.0.1/24", "rate-limit":"100"}'
+[2017-10-22 22:29:04.955](ADDING) '{"origin":"igp", "aspath":"200,300,2000", "community":"no-export", "proto":"tcp", "src-ip":"10.0.0.1/24", "dst-port":"53", "dst-ip":"20.0.0.1/24", "rate-limit":"100"}'
+[2017-10-22 22:29:46.006](DELETE) '{"uuid":"d87d7ea7-3475-4de7-a6a9-ef8b77dcd0cc"}'

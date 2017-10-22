@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"encoding/json"
 	"github.com/joho/godotenv"
 	"io"
@@ -9,11 +11,22 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
-type addPath string
+func addog(text string, filename string) {
+	var writer *bufio.Writer
+	data := []byte(text)
 
-type delPath string
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	writer = bufio.NewWriter(f)
+	writer.Write(data)
+	writer.Flush()
+	 if err != nil {
+                fmt.Println(err)
+        }
+	defer f.Close()
+}
 
 func Env_load() {
 	err := godotenv.Load()
@@ -100,6 +113,11 @@ func main() {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+
+			t := time.Now()
+			tf := t.Format("2006-01-02 15:04:05.000")
+			logtf := "[" + tf + "](ADDING) '" + string(body[:length]) + "'\n"
+			addog(logtf, "jgob.log")
 
 			//parse json
 			var jsonBody map[string]string
@@ -201,6 +219,11 @@ func main() {
                                 w.WriteHeader(http.StatusInternalServerError)
                                 return
                         }
+
+			t := time.Now()
+                        tf := t.Format("2006-01-02 15:04:05.000")
+                        logtf := "[" + tf + "](DELETE) '" + string(body[:length]) + "'\n"
+                        addog(logtf, "jgob.log")
 
                         //parse json
                         var jsonBody map[string]string

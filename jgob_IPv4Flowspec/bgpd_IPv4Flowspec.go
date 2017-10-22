@@ -18,9 +18,19 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+func exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
+
 func dog(text string, filename string) {
-	text_data := []byte(text)
-	err := ioutil.WriteFile(filename, text_data, os.ModePerm)
+	if !exists(filename) {
+		//os.MkdirAll(GOBGPHOME, 0600)
+		os.Create(filename)
+	}
+
+	data := []byte(text)
+	err := ioutil.WriteFile(filename, data, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -93,7 +103,7 @@ func JgobServer(achan, schan, rchan chan string) {
                                         log.Fatal(err)
                                 }
 			}
-			dog(showFlowSpecRib(client), "jdog.log")
+			dog(showFlowSpecRib(client), "jgob.route")
 		case req := <-schan:
 			switch req {
 				case "route":

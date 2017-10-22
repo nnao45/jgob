@@ -1,0 +1,1 @@
+[destination:20.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==53] [Nexthop:fictitious] [AsPath: 200 300 2000] [Age:00:00:42] [{Origin: i} {Communities: no-export} {Extcomms: [rate: 100.000000]}] [UUID:f6c08372-a5fe-4257-92c9-e593e2a3a10b]

@@ -24,6 +24,8 @@ func main() {
 
 	a := make(chan string)
 
+//	s := make(chan struct{}, 0)
+
 	go JgobServer(a)
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +38,17 @@ func main() {
 			w.Write([]byte("JGOB is up and running\n"))
 		}
 	})
+
+	http.HandleFunc("/show", func(w http.ResponseWriter, r *http.Request) {
+                if checkAuth(r) == false {
+                        w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+                        w.WriteHeader(401)
+                        w.Write([]byte("401 Unauthorized\n"))
+                        return
+                } else {
+                        w.Write([]byte("JGOB is up and running\n"))
+                }
+        })
 
 	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {

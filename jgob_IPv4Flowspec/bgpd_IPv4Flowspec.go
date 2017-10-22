@@ -75,6 +75,7 @@ func JgobServer(cmdLine chan string) {
 			if err != nil{
 				panic(err)
 			}
+			fmt.Printf("%s\n", ShowFlowSpecRib(client))
 		}
 	}
 }
@@ -109,4 +110,94 @@ func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte,
 		uuid = r.Uuid
 	}
 	return uuid, nil
+}
+
+func ShowFlowSpecRib(client api.GobgpApiClient) string{
+	var dsts []*api.Destination
+	var myNativeTable *table.Table
+	var sum string
+	resource := api.Resource_GLOBAL
+	family, _ := bgp.GetRouteFamily("ipv4-flowspec")
+
+	res, err := client.GetRib(context.Background(), &api.GetRibRequest{
+		Table: &api.Table{
+			Type:         resource,
+			Family:       uint32(family),
+			Name:         "",
+			Destinations: dsts,
+		},
+	})
+	if err != nil {
+		return ""
+	}
+	myNativeTable, err = res.Table.ToNativeTable()
+
+	for _, d := range myNativeTable.GetSortedDestinations() {
+		var ps []*table.Path
+		ps = d.GetAllKnownPathList()
+		s := showRouteToItem(ps)
+		sum = sum + s
+	}
+	return sum
+}
+
+func showRouteToItem(pathList []*table.Path) string{
+	maxPrefixLen := 100
+	maxNexthopLen := 20
+	var sum string
+
+	now := time.Now()
+	for _, p := range pathList {
+		nexthop := "fictitious"
+		if n := p.GetNexthop(); n != nil {
+			nexthop = p.GetNexthop().String()
+		}
+
+		s := []string{}
+		for _, a := range p.GetPathAttrs() {
+			switch a.GetType() {
+			case bgp.BGP_ATTR_TYPE_NEXT_HOP, bgp.BGP_ATTR_TYPE_MP_REACH_NLRI, bgp.BGP_ATTR_TYPE_AS_PATH, bgp.BGP_ATTR_TYPE_AS4_PATH:
+				continue
+			default:
+				s = append(s, a.String())
+			}
+		}
+		pattrstr := fmt.Sprint(s)
+
+		if maxNexthopLen < len(nexthop) {
+			maxNexthopLen = len(nexthop)
+		}
+
+		nlri := p.GetNlri()
+
+		if maxPrefixLen < len(nlri.String()) {
+			maxPrefixLen = len(nlri.String())
+		}
+
+		age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+		// fill up the tree with items
+		str :=  fmt.Sprintf("%s %s %s %s %s\n", nlri.String(), pattrstr, age, nexthop, p.UUID().String())
+		sum = sum + str
+	}
+	return sum
+}
+
+func formatTimedelta(d int64) string {
+	u := uint64(d)
+	neg := d < 0
+	if neg {
+		u = -u
+	}
+	secs := u % 60
+	u /= 60
+	mins := u % 60
+	u /= 60
+	hours := u % 24
+	days := u / 24
+
+	if days == 0 {
+		return fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
+	} else {
+		return fmt.Sprintf("%dd ", days) + fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
+	}
 }

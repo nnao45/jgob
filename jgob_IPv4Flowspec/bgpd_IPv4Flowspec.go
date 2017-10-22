@@ -77,8 +77,7 @@ func JgobServer(achan chan string, schan chan struct{}, rchan chan string) {
 			}
 		case <- schan:
 			client := api.NewGobgpApiClient(conn)
-			res := fmt.Sprintf("%s", ShowFlowSpecRib(client))
-			rchan <- res
+			rchan <- ShowFlowSpecRib(client)
 		}
 	}
 }

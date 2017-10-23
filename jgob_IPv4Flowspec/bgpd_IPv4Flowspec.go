@@ -1,8 +1,7 @@
 package main
 
 import (
-	"os"
-	"io/ioutil"
+	"bufio"
 	"context"
 	"fmt"
 	api "github.com/osrg/gobgp/api"
@@ -11,11 +10,14 @@ import (
 	"github.com/osrg/gobgp/packet/bgp"
 	gobgp "github.com/osrg/gobgp/server"
 	"github.com/osrg/gobgp/table"
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"io/ioutil"
+	"net/url"
+	"os"
 	"strings"
 	"time"
-	"github.com/satori/go.uuid"
 )
 
 func exists(filename string) bool {
@@ -37,6 +39,8 @@ func dog(text string, filename string) {
 }
 
 func JgobServer(achan, schan, rchan chan string) {
+	Env_load()
+
 	log.SetLevel(log.DebugLevel)
 	s := gobgp.NewBgpServer()
 	go s.Serve()
@@ -80,6 +84,36 @@ func JgobServer(achan, schan, rchan chan string) {
 		log.Fatal(err)
 	}
 
+	go func() {
+		x := 0
+		for {
+			if x > 2 {
+				os.Exit(1)
+			}
+			if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
+				break
+			} else {
+				time.Sleep(500 * time.Millisecond)
+				x++
+			}
+		}
+		last, err := os.Open("jgob.route")
+		if err != nil {
+			panic(err)
+		}
+		defer last.Close()
+		lastscanner := bufio.NewScanner(last)
+		for lastscanner.Scan() {
+			route := lastscanner.Text()
+			values := url.Values{}
+			err := curlPost(values, route, os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+			if err != nil {
+				panic(err)
+			}
+		}
+
+	}()
+
 	timeout := grpc.WithTimeout(time.Second)
 	conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())
 	if rpcErr != nil {
@@ -87,13 +121,12 @@ func JgobServer(achan, schan, rchan chan string) {
 		fmt.Println(rpcErr)
 		return
 	}
-	
 
 	for {
 		select {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
-			if strings.Contains(c, "match"){
+			if strings.Contains(c, "match") {
 				_, err := pushNewFlowSpecPath(client, c, "IPv4")
 				if err != nil {
 					log.Fatal(err)
@@ -101,22 +134,22 @@ func JgobServer(achan, schan, rchan chan string) {
 			} else {
 				err := deleteFlowSpecPath(client, c)
 				if err != nil {
-                                        log.Fatal(err)
-                                }
+					log.Fatal(err)
+				}
 			}
 			dog(showFlowSpecRib(client), "jgob.route")
 		case req := <-schan:
 			switch req {
-				case "route":
-					client := api.NewGobgpApiClient(conn)
-					rchan <- showFlowSpecRib(client)
-				case "nei":
-					client := api.NewGobgpApiClient(conn)
-					var rsum string
-					for _, s := range showBgpNeighbor(client) {
+			case "route":
+				client := api.NewGobgpApiClient(conn)
+				rchan <- showFlowSpecRib(client)
+			case "nei":
+				client := api.NewGobgpApiClient(conn)
+				var rsum string
+				for _, s := range showBgpNeighbor(client) {
 					rsum = rsum + s
-					}
-					rchan <- rsum
+				}
+				rchan <- rsum
 			}
 		}
 	}
@@ -239,10 +272,10 @@ func showRouteToItem(pathList []*table.Path) string {
 		var attrStr string
 		for _, s := range attr {
 			s = strings.ToLower(s)
-			if strings.Contains(s, "extcomms") && strings.Contains(s, "rate"){
+			if strings.Contains(s, "extcomms") && strings.Contains(s, "rate") {
 				s = strings.Replace(s, "{extcomms: [rate: ", `"extcomms":"`, 1)
 				s = strings.Replace(s, "]}", `"`, -1)
-			} else if strings.Contains(s, "extcomms") && strings.Contains(s, "discard"){
+			} else if strings.Contains(s, "extcomms") && strings.Contains(s, "discard") {
 				s = strings.Replace(s, "{extcomms: [", `"extcomms":"`, 1)
 				s = strings.Replace(s, "]}", `"`, -1)
 			} else {
@@ -263,7 +296,7 @@ func showRouteToItem(pathList []*table.Path) string {
 		nlriAry = strings.Split(nlri.String(), "]")
 		for _, s := range nlriAry {
 			if s != "" {
-				nlriStr = nlriStr +  strings.Replace(s, "[", `"`, -1) + `", `
+				nlriStr = nlriStr + strings.Replace(s, "[", `"`, -1) + `", `
 			}
 		}
 		nlriStr = strings.Replace(nlriStr, ":", `":"`, -1)

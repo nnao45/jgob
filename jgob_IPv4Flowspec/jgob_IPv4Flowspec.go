@@ -41,6 +41,7 @@ func main() {
 	achan := make(chan string)
 	schan := make(chan string)
 	rchan := make(chan string)
+	//open := make(chan struct{}, 0)
 
 	go JgobServer(achan, schan, rchan)
 
@@ -152,12 +153,12 @@ func main() {
 			}
 
 			if jsonBody["source-port"] != "" {
-				s := "source-port " + jsonBody["source-port"] + ""
+				s := "source-port" + strings.Trim(jsonBody["source-port"], "true") + ""
 				resAry = append(resAry, s)
 			}
 
 			if jsonBody["destination-port"] != "" {
-				s := "destination-port " + jsonBody["destination-port"] + ""
+				s := "destination-port" + strings.Trim(jsonBody["destination-port"], "true") + ""
 				resAry = append(resAry, s)
 			}
 
@@ -253,8 +254,25 @@ func main() {
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
-
 }
+
+/*
+func isStartAPI() {
+	Env_load()
+	x := 0
+	for {
+		if x > 2 {
+			os.Exit(1)
+		}
+		if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
+			break
+		} else {
+			time.Sleep(500 * time.Millisecond)
+			x++
+		}
+	}
+}
+*/
 
 func checkAuth(r *http.Request) bool {
 	Env_load()

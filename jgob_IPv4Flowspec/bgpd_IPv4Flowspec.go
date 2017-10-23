@@ -221,7 +221,7 @@ func addSyslogHook(host, facility string) error {
 		priority = syslog.LOG_LOCAL7
 	}
 
-	hook, err := lSyslog.NewSyslogHook(network, addr, syslog.LOG_INFO|priority, "bgpd")
+	hook, err := lSyslog.NewSyslogHook(network, addr, syslog.LOG_INFO|priority, "gobgpd")
 	if err != nil {
 		return err
 	}

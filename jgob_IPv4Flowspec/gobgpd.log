@@ -16,3 +16,58 @@ time="2017-10-23T14:33:49+09:00" level=debug msg="sent update" Key=10.14.10.16 S
 time="2017-10-23T14:33:51+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
 time="2017-10-23T14:33:51+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer
 time="2017-10-23T14:34:16+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x1266ab8}"
+time="2017-10-23T14:53:42+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T14:53:42+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T14:53:42+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T14:53:42+09:00" level=debug msg="create Destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:53:42+09:00" level=debug msg="Processing destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:53:42+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:53:42+09:00" level=debug msg="create Destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:53:42+09:00" level=debug msg="Processing destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:53:42+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:53:54+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENSENT old=BGP_FSM_ACTIVE reason=new-connection
+time="2017-10-23T14:53:54+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENCONFIRM old=BGP_FSM_OPENSENT reason=open-msg-received
+time="2017-10-23T14:53:54+09:00" level=info msg="Peer Up" Key=10.14.10.16 State=BGP_FSM_OPENCONFIRM Topic=Peer
+time="2017-10-23T14:53:54+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ESTABLISHED old=BGP_FSM_OPENCONFIRM reason=open-msg-negotiated
+time="2017-10-23T14:53:54+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:53:54+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:53:59+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:53:59+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer
+time="2017-10-23T14:54:24+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T14:54:54+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T14:55:24+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T14:57:35+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T14:57:35+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T14:57:35+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T14:57:35+09:00" level=debug msg="create Destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:57:35+09:00" level=debug msg="Processing destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:57:35+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:57:36+09:00" level=debug msg="create Destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:57:36+09:00" level=debug msg="Processing destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:57:36+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:57:52+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENSENT old=BGP_FSM_ACTIVE reason=new-connection
+time="2017-10-23T14:57:52+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENCONFIRM old=BGP_FSM_OPENSENT reason=open-msg-received
+time="2017-10-23T14:57:52+09:00" level=info msg="Peer Up" Key=10.14.10.16 State=BGP_FSM_OPENCONFIRM Topic=Peer
+time="2017-10-23T14:57:52+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ESTABLISHED old=BGP_FSM_OPENCONFIRM reason=open-msg-negotiated
+time="2017-10-23T14:57:52+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:57:52+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:57:57+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:57:57+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer
+time="2017-10-23T14:58:22+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T14:58:54+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T14:58:54+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T14:58:54+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T14:58:54+09:00" level=debug msg="create Destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:58:54+09:00" level=debug msg="Processing destination" Key="[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:58:54+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:58:54+09:00" level=debug msg="create Destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=Table
+time="2017-10-23T14:58:54+09:00" level=debug msg="Processing destination" Key="[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]" Topic=table
+time="2017-10-23T14:58:54+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T14:59:09+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENSENT old=BGP_FSM_ACTIVE reason=new-connection
+time="2017-10-23T14:59:09+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENCONFIRM old=BGP_FSM_OPENSENT reason=open-msg-received
+time="2017-10-23T14:59:09+09:00" level=info msg="Peer Up" Key=10.14.10.16 State=BGP_FSM_OPENCONFIRM Topic=Peer
+time="2017-10-23T14:59:09+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ESTABLISHED old=BGP_FSM_OPENCONFIRM reason=open-msg-negotiated
+time="2017-10-23T14:59:09+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:10.0.0.0/24][source:30.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:59:09+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: i}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:30.0.0.0/24][source:20.0.0.0/24][destination-port:true  ==23][source-port:true  ==10]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:59:14+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T14:59:14+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer

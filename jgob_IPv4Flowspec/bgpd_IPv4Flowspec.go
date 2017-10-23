@@ -110,6 +110,7 @@ func JgobServer(achan, schan, rchan chan string) {
 			if err != nil {
 				panic(err)
 			}
+			time.Sleep(500 * time.Millisecond)
 		}
 
 	}()

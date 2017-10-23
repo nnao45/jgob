@@ -41,9 +41,8 @@ func main() {
 	achan := make(chan string)
 	schan := make(chan string)
 	rchan := make(chan string)
-	open  := make(chan struct{}, 0)
 
-	go JgobServer(achan, schan, rchan, open)
+	go JgobServer(achan, schan, rchan)
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
@@ -66,7 +65,6 @@ func main() {
 			w.Write([]byte("▼show flowspec ipv4 in Gobgpd\n"))
 			schan <- "route"
 			w.Write([]byte(<-rchan))
-			defer open <- struct{}{}
 		}
 	})
 
@@ -80,7 +78,6 @@ func main() {
 			w.Write([]byte("▼show bgp neighbor flowspec summary\n"))
 			schan <- "nei"
 			w.Write([]byte(<-rchan))
-			defer open <- struct{}{}
 		}
 	})
 
@@ -134,6 +131,11 @@ func main() {
 
 			resAry := make([]string, 0, 20)
 
+			if jsonBody["aspath"] != "" {
+				s := "aspath " + jsonBody["aspath"]
+				resAry = append(resAry, s)
+			}
+
 			if jsonBody["protocol"] == "tcp" || jsonBody["protocol"] == "udp" || jsonBody["protocol"] == "icmp" {
 				s := "protocol " + jsonBody["protocol"]
 				resAry = append(resAry, s)
@@ -159,14 +161,6 @@ func main() {
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["extcomms"] == "accept" || jsonBody["extcomms"] == "discard" {
-				s := "then " + jsonBody["extcomms"]
-				resAry = append(resAry, s)
-			} else if jsonBody["extcomms"] != "" {
-				s := "then rate-limit " + jsonBody["extcomms"]
-				resAry = append(resAry, s)
-			}
-
 			if jsonBody["origin"] == " i" {
 				jsonBody["origin"] = "igp"
 			} else if jsonBody["origin"] == " e" {
@@ -180,13 +174,16 @@ func main() {
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["aspath"] != "" {
-				s := "aspath " + jsonBody["aspath"]
+			if jsonBody["communities"] != "" {
+				s := "community " + jsonBody["communities"]
 				resAry = append(resAry, s)
 			}
 
-			if jsonBody["community"] != "" {
-				s := "community " + jsonBody["community"]
+			if jsonBody["extcomms"] == "accept" || jsonBody["extcomms"] == "discard" {
+				s := "then " + jsonBody["extcomms"]
+				resAry = append(resAry, s)
+			} else if jsonBody["extcomms"] != "" {
+				s := "then rate-limit " + jsonBody["extcomms"]
 				resAry = append(resAry, s)
 			}
 
@@ -194,7 +191,6 @@ func main() {
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
-			defer open <- struct{}{}
 		}
 	})
 
@@ -253,7 +249,6 @@ func main() {
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
-			defer open <- struct{}{}
 		}
 	})
 

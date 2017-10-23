@@ -36,7 +36,7 @@ func dog(text string, filename string) {
 	}
 }
 
-func JgobServer(achan, schan, rchan chan string, open chan struct{}) {
+func JgobServer(achan, schan, rchan chan string) {
 	log.SetLevel(log.DebugLevel)
 	s := gobgp.NewBgpServer()
 	go s.Serve()
@@ -49,8 +49,8 @@ func JgobServer(achan, schan, rchan chan string, open chan struct{}) {
 	// global configuration
 	global := &config.Global{
 		Config: config.GlobalConfig{
-			As:       65000,
-			RouterId: "10.0.255.254",
+			As:       65501,
+			RouterId: "172.30.1.176",
 			Port:     -1, // gobgp won't listen on tcp:179
 		},
 	}
@@ -62,8 +62,8 @@ func JgobServer(achan, schan, rchan chan string, open chan struct{}) {
 	// neighbor configuration
 	n := &config.Neighbor{
 		Config: config.NeighborConfig{
-			NeighborAddress: "10.0.255.1",
-			PeerAs:          65000,
+			NeighborAddress: "10.14.10.16",
+			PeerAs:          65501,
 			PeerType:        config.PEER_TYPE_INTERNAL,
 		},
 		AfiSafis: []config.AfiSafi{
@@ -89,8 +89,6 @@ func JgobServer(achan, schan, rchan chan string, open chan struct{}) {
 	}
 	
 
-locked
-<- open
 	for {
 		select {
 		case c := <-achan:
@@ -107,13 +105,11 @@ locked
                                 }
 			}
 			dog(showFlowSpecRib(client), "jgob.route")
-			goto locked
 		case req := <-schan:
 			switch req {
 				case "route":
 					client := api.NewGobgpApiClient(conn)
 					rchan <- showFlowSpecRib(client)
-					goto locked
 				case "nei":
 					client := api.NewGobgpApiClient(conn)
 					var rsum string
@@ -121,7 +117,6 @@ locked
 					rsum = rsum + s
 					}
 					rchan <- rsum
-					goto locked
 			}
 		}
 	}
@@ -217,7 +212,7 @@ func showRouteToItem(pathList []*table.Path) string {
 	maxNexthopLen := 20
 	var sum string
 
-	//now := time.Now()
+	now := time.Now()
 	for _, p := range pathList {
 		nexthop := "fictitious"
 		if n := p.GetNexthop(); n != nil {
@@ -246,16 +241,16 @@ func showRouteToItem(pathList []*table.Path) string {
 			s = strings.ToLower(s)
 			if strings.Contains(s, "extcomms") && strings.Contains(s, "rate"){
 				s = strings.Replace(s, "{extcomms: [rate: ", `"extcomms":"`, 1)
-				s = strings.Replace(s, "]}", `",`, -1)
+				s = strings.Replace(s, "]}", `"`, -1)
 			} else if strings.Contains(s, "extcomms") && strings.Contains(s, "discard"){
 				s = strings.Replace(s, "{extcomms: [", `"extcomms":"`, 1)
-				s = strings.Replace(s, "]}", `",`, -1)
+				s = strings.Replace(s, "]}", `"`, -1)
 			} else {
 				s = strings.Replace(s, ":", `":"`, -1)
 				s = strings.Replace(s, "{", `"`, -1)
-				s = strings.Replace(s, "}", `", `, -1)
+				s = strings.Replace(s, "}", `"`, -1)
 			}
-			attrStr = attrStr + s
+			attrStr = attrStr + s + ","
 		}
 
 		if maxNexthopLen < len(nexthop) {
@@ -279,14 +274,14 @@ func showRouteToItem(pathList []*table.Path) string {
 
 		//nexthop = "[Nexthop:" + nexthop + "]"
 
-		//age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+		age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
 
-		//age = "[Age:" + age + "]"
+		age = `"age":"` + age + `",`
 
 		uuid := `"uuid":"` + p.UUID().String() + `"`
 
 		// fill up the tree with items
-		str := fmt.Sprintf("{%s %s %s %s}\n", nlriStr, apStr, attrStr, uuid)
+		str := fmt.Sprintf("{%s %s %s %s %s}\n", nlriStr, apStr, age, attrStr, uuid)
 		sum = sum + str
 	}
 	return sum

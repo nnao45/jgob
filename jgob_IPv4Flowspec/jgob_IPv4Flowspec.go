@@ -41,8 +41,9 @@ func main() {
 	achan := make(chan string)
 	schan := make(chan string)
 	rchan := make(chan string)
+	open  := make(chan struct{}, 0)
 
-	go JgobServer(achan, schan, rchan)
+	go JgobServer(achan, schan, rchan, open)
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
@@ -65,6 +66,7 @@ func main() {
 			w.Write([]byte("▼show flowspec ipv4 in Gobgpd\n"))
 			schan <- "route"
 			w.Write([]byte(<-rchan))
+			defer open <- struct{}{}
 		}
 	})
 
@@ -78,6 +80,7 @@ func main() {
 			w.Write([]byte("▼show bgp neighbor flowspec summary\n"))
 			schan <- "nei"
 			w.Write([]byte(<-rchan))
+			defer open <- struct{}{}
 		}
 	})
 
@@ -191,6 +194,7 @@ func main() {
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
+			defer open <- struct{}{}
 		}
 	})
 
@@ -249,6 +253,7 @@ func main() {
 			achan <- res
 
 			w.WriteHeader(http.StatusOK)
+			defer open <- struct{}{}
 		}
 	})
 

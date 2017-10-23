@@ -36,7 +36,7 @@ func dog(text string, filename string) {
 	}
 }
 
-func JgobServer(achan, schan, rchan chan string) {
+func JgobServer(achan, schan, rchan chan string, open chan struct{}) {
 	log.SetLevel(log.DebugLevel)
 	s := gobgp.NewBgpServer()
 	go s.Serve()
@@ -87,7 +87,10 @@ func JgobServer(achan, schan, rchan chan string) {
 		fmt.Println(rpcErr)
 		return
 	}
+	
 
+locked
+<- open
 	for {
 		select {
 		case c := <-achan:
@@ -104,11 +107,13 @@ func JgobServer(achan, schan, rchan chan string) {
                                 }
 			}
 			dog(showFlowSpecRib(client), "jgob.route")
+			goto locked
 		case req := <-schan:
 			switch req {
 				case "route":
 					client := api.NewGobgpApiClient(conn)
 					rchan <- showFlowSpecRib(client)
+					goto locked
 				case "nei":
 					client := api.NewGobgpApiClient(conn)
 					var rsum string
@@ -116,6 +121,7 @@ func JgobServer(achan, schan, rchan chan string) {
 					rsum = rsum + s
 					}
 					rchan <- rsum
+					goto locked
 			}
 		}
 	}

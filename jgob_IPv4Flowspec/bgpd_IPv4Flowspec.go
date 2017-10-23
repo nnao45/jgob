@@ -96,7 +96,10 @@ func JgobServer(achan, schan, rchan chan string) {
 		log.Error(err)
 	}
 
+	lock := make(chan struct{}, 0)
 	go func() {
+		<- lock
+		time.Sleep(500 * time.Millisecond)
 		x := 0
 		for {
 			if x > 2 {
@@ -135,6 +138,7 @@ func JgobServer(achan, schan, rchan chan string) {
 		return
 	}
 
+	lock <- struct{}{}
 	for {
 		select {
 		case c := <-achan:

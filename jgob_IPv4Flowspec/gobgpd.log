@@ -146,3 +146,107 @@ time="2017-10-23T22:13:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_
 time="2017-10-23T22:14:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
 time="2017-10-23T22:14:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
 time="2017-10-23T22:15:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:15:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:16:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:16:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:17:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:17:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:18:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:18:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:19:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:19:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:20:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:20:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:21:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:21:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:22:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:22:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:23:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:23:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:24:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:24:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:25:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:25:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:26:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:26:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:27:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:27:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:28:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:28:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:29:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:29:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:30:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:30:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:31:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:31:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:32:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:32:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:33:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:33:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:34:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:34:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:35:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:35:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:36:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:36:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:37:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:37:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:38:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:38:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:39:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:39:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:40:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:40:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:41:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:41:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:42:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:42:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:43:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:43:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:44:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:44:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:45:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:45:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:46:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:46:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:47:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:47:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:48:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:48:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:49:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:49:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:50:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:50:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:51:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:51:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:52:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:52:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:53:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:53:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:54:14+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:54:44+09:00" level=debug msg=sent Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer data="&{{[] 19 4} 0x126bb80}"
+time="2017-10-23T22:59:25+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T22:59:25+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T22:59:25+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T22:59:25+09:00" level=debug msg="create Destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-23T22:59:25+09:00" level=debug msg="Processing destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-23T22:59:25+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T23:00:19+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T23:00:19+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T23:00:19+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T23:00:19+09:00" level=debug msg="create Destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-23T23:00:19+09:00" level=debug msg="Processing destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-23T23:00:19+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-23T23:00:34+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENSENT old=BGP_FSM_ACTIVE reason=new-connection
+time="2017-10-23T23:00:34+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENCONFIRM old=BGP_FSM_OPENSENT reason=open-msg-received
+time="2017-10-23T23:00:34+09:00" level=info msg="Peer Up" Key=10.14.10.16 State=BGP_FSM_OPENCONFIRM Topic=Peer
+time="2017-10-23T23:00:34+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ESTABLISHED old=BGP_FSM_OPENCONFIRM reason=open-msg-negotiated
+time="2017-10-23T23:00:34+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: ?}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T23:00:39+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
+time="2017-10-23T23:00:39+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer
+time="2017-10-23T23:02:37+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-23T23:02:37+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-23T23:02:37+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-23T23:02:38+09:00" level=debug msg="create Destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-23T23:02:38+09:00" level=debug msg="Processing destination" Key="[destination:20.0.0.0/24][source:10.0.0.0/24][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-23T23:02:38+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table

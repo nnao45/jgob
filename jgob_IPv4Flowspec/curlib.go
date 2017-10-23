@@ -45,8 +45,6 @@ func curlPost(values url.Values, cmd, user, pass string) error {
 }
 
 func execute(resp *http.Response) string {
-	// response bodyを文字列で取得するサンプル
-	// ioutil.ReadAllを使う
 	b, err := ioutil.ReadAll(resp.Body)
 	if err == nil {
 		return string(b)

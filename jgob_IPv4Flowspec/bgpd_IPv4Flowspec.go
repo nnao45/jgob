@@ -235,11 +235,17 @@ func addSyslogHook(host, facility string) error {
 
 func pushNewFlowSpecPath(client api.GobgpApiClient, myCommand string, myAddrFam string) ([]byte, error) {
 	if myAddrFam == "IPv4" {
-		path, _ := cmd.ParsePath(bgp.RF_FS_IPv4_UC, strings.Split(myCommand, " "))
+		path, err := cmd.ParsePath(bgp.RF_FS_IPv4_UC, strings.Split(myCommand, " "))
+		if err != nil {
+			log.Fatal(err)
+		}
 		return (addFlowSpecPath(client, []*table.Path{path}))
 	}
 	if myAddrFam == "IPv6" {
-		path, _ := cmd.ParsePath(bgp.RF_FS_IPv6_UC, strings.Split(myCommand, " "))
+		path, err := cmd.ParsePath(bgp.RF_FS_IPv6_UC, strings.Split(myCommand, " "))
+		if err != nil {
+			log.Fatal(err)
+		}
 		return (addFlowSpecPath(client, []*table.Path{path}))
 	}
 	return nil, nil
@@ -360,6 +366,9 @@ func showRouteToItem(pathList []*table.Path) string {
 				s = strings.Replace(s, ":", `":"`, -1)
 				s = strings.Replace(s, "{", `"`, -1)
 				s = strings.Replace(s, "}", `"`, -1)
+				if strings.Contains(s, "no-export") {
+					s = strings.Replace(s, " no-export", "no-export", 1)
+				}
 			}
 			attrStr = attrStr + s + ","
 		}
@@ -374,6 +383,10 @@ func showRouteToItem(pathList []*table.Path) string {
 		nlriAry = strings.Split(nlri.String(), "]")
 		for _, s := range nlriAry {
 			if s != "" {
+				if strings.Contains(s, "protocol") {
+					s = strings.Replace(s, "protocol:==", `protocol:`, 1)
+					s = strings.Trim(s, " ")
+				}
 				nlriStr = nlriStr + strings.Replace(s, "[", `"`, -1) + `", `
 			}
 		}

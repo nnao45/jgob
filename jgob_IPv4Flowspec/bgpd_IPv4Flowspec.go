@@ -42,6 +42,14 @@ func JgobServer(achan, schan, rchan chan string) {
 	Env_load()
 
 	log.SetLevel(log.DebugLevel)
+	gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic(fmt.Sprintf("[Error]: %s", err))
+	}
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, DisableColors: true})
+	log.SetOutput(gobgpdLogFile)
+
+
 	s := gobgp.NewBgpServer()
 	go s.Serve()
 

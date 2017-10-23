@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"github.com/joho/godotenv"
 	"io"
 	"log"
@@ -23,7 +22,7 @@ func addog(text string, filename string) {
 	writer.Write(data)
 	writer.Flush()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal("Error loading %s file", filename)
 	}
 	defer f.Close()
 }

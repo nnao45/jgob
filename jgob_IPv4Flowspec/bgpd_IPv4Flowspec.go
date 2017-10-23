@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"bufio"
 	"context"
-	"fmt"
 	api "github.com/osrg/gobgp/api"
 	"github.com/osrg/gobgp/config"
 	"github.com/osrg/gobgp/gobgp/cmd"
@@ -36,7 +36,7 @@ func dog(text string, filename string) {
 	data := []byte(text)
 	err := ioutil.WriteFile(filename, data, os.ModePerm)
 	if err != nil {
-		fmt.Println(err)
+		log.Error("Unable to loading, ", filename)
 	}
 }
 
@@ -46,7 +46,7 @@ func JgobServer(achan, schan, rchan chan string) {
 	log.SetLevel(log.DebugLevel)
 	gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
-		panic(fmt.Sprintf("[Error]: %s", err))
+		panic(err)
 	}
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, DisableColors: true})
 	log.SetOutput(gobgpdLogFile)
@@ -93,7 +93,7 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	if err := s.AddNeighbor(n); err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	go func() {
@@ -111,7 +111,7 @@ func JgobServer(achan, schan, rchan chan string) {
 		}
 		last, err := os.Open("jgob.route")
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		defer last.Close()
 		lastscanner := bufio.NewScanner(last)
@@ -120,7 +120,7 @@ func JgobServer(achan, schan, rchan chan string) {
 			values := url.Values{}
 			err := curlPost(values, route, os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
 			if err != nil {
-				panic(err)
+				log.Error("Unable to loading route's json, ", route)
 			}
 			time.Sleep(500 * time.Millisecond)
 		}
@@ -130,8 +130,8 @@ func JgobServer(achan, schan, rchan chan string) {
 	timeout := grpc.WithTimeout(time.Second)
 	conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())
 	if rpcErr != nil {
-		fmt.Printf("GoBGP is probably not running on the local server ... Please start gobgpd process !\n")
-		fmt.Println(rpcErr)
+		log.Fatal("GoBGP is probably not running on the local server ... Please start gobgpd process !\n")
+		log.Fatal(rpcErr)
 		return
 	}
 
@@ -142,12 +142,12 @@ func JgobServer(achan, schan, rchan chan string) {
 			if strings.Contains(c, "match") {
 				_, err := pushNewFlowSpecPath(client, c, "IPv4")
 				if err != nil {
-					log.Fatal(err)
+					log.Error(err)
 				}
 			} else {
 				err := deleteFlowSpecPath(client, c)
 				if err != nil {
-					log.Fatal(err)
+					log.Error(err)
 				}
 			}
 			dog(showFlowSpecRib(client), "jgob.route")
@@ -262,7 +262,7 @@ func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte,
 func deleteFlowSpecPath(client api.GobgpApiClient, myUuid string) error {
 	byteUuid, err := uuid.FromString(myUuid)
 	if err != nil {
-		fmt.Printf("Something gone wrong with UUID converion into bytes: %s\n", err)
+		log.Error("Something gone wrong with UUID converion into bytes: %s\n", err)
 	}
 	return deleteFlowSpecPathFromUuid(client, byteUuid.Bytes())
 }

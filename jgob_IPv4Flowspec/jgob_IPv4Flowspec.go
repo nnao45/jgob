@@ -51,7 +51,10 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 			return
 		} else {
-			w.Write([]byte("JGOB is up and running\n"))
+			str := "JGOB is up and running\n"
+			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
 		}
 	})
 
@@ -62,9 +65,12 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 			return
 		} else {
-			w.Write([]byte("▼show flowspec ipv4 in Gobgpd\n"))
 			schan <- "route"
-			w.Write([]byte(<-rchan))
+			str := <- rchan
+			str = "▼show flowspec ipv4 in Gobgpd\n" + str
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
 		}
 	})
 
@@ -75,9 +81,12 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 			return
 		} else {
-			w.Write([]byte("▼show bgp neighbor flowspec summary\n"))
 			schan <- "nei"
-			w.Write([]byte(<-rchan))
+			str := <- rchan
+			str = "▼show bgp neighbor flowspec summary\n" + str
+			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
 		}
 	})
 

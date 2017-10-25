@@ -137,7 +137,7 @@ func JgobServer(achan, schan, rchan chan string) {
 		return
 	}
 
-	var c int
+	var count int
 	for {
 		select {
 		case c := <-achan:
@@ -168,8 +168,8 @@ func JgobServer(achan, schan, rchan chan string) {
 				rchan <- rsum
 			}
 		default:
-			if c == 0{
-				c++
+			if count == 0{
+				count++
 				lock <- struct{}{}
 			}
 		}

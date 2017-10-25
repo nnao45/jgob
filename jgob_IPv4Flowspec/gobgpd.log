@@ -448,3 +448,30 @@ time="2017-10-24T10:01:00+09:00" level=debug msg="create Destination" Key="[dest
 time="2017-10-24T10:01:00+09:00" level=debug msg="Processing destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=table
 time="2017-10-24T10:01:00+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
 time="2017-10-24T10:01:00+09:00" level=debug msg="sent update" Key=10.14.10.16 State=BGP_FSM_ESTABLISHED Topic=Peer attributes="[{Origin: ?}  {LocalPref: 100} {MpReach(ipv4-flowspec): {Nexthop: <nil>, NLRIs: [[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]]}} {Extcomms: [rate: 100.000000]}]" nlri="[]" withdrawals="[]"
+time="2017-10-25T20:57:47+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-25T20:57:47+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-25T20:57:47+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-25T20:58:01+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENSENT old=BGP_FSM_ACTIVE reason=new-connection
+time="2017-10-25T20:58:01+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_OPENCONFIRM old=BGP_FSM_OPENSENT reason=open-msg-received
+time="2017-10-25T20:58:01+09:00" level=info msg="Peer Up" Key=10.14.10.16 State=BGP_FSM_OPENCONFIRM Topic=Peer
+time="2017-10-25T20:58:01+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ESTABLISHED old=BGP_FSM_OPENCONFIRM reason=open-msg-negotiated
+time="2017-10-25T20:58:06+09:00" level=debug msg="received update" Key=10.14.10.16 Topic=Peer attributes="[{MpUnreach(ipv4-flowspec): End-of-Rib}]" nlri="[]" withdrawals="[]"
+time="2017-10-25T20:58:06+09:00" level=debug msg="EOR received" AddressFamily=ipv4-flowspec Key=10.14.10.16 Topic=Peer
+time="2017-10-25T20:58:44+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-25T20:58:44+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-25T20:58:44+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-25T20:58:45+09:00" level=debug msg="create Destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-25T20:58:45+09:00" level=debug msg="Processing destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-25T20:58:45+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-25T20:58:45+09:00" level=debug msg="create Destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=Table
+time="2017-10-25T20:58:45+09:00" level=debug msg="Processing destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=table
+time="2017-10-25T20:58:45+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-25T20:59:30+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-25T20:59:30+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-25T20:59:30+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-25T20:59:30+09:00" level=debug msg="create Destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-25T20:59:30+09:00" level=debug msg="Processing destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-25T20:59:30+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-25T20:59:31+09:00" level=debug msg="create Destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=Table
+time="2017-10-25T20:59:31+09:00" level=debug msg="Processing destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=table
+time="2017-10-25T20:59:31+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table

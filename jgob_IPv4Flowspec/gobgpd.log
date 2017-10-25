@@ -564,3 +564,28 @@ time="2017-10-26T00:23:27+09:00" level=info msg="Adding flowspec prefix is match
 time="2017-10-26T00:23:27+09:00" level=info msg="Finish the installing Jgob's routing table."
 time="2017-10-26T00:23:27+09:00" level=info msg="SUCCESS!! Routing table installing Full prefix in the routing table."
 time="2017-10-26T00:23:47+09:00" level=debug msg="failed to connect: timeout" Key=10.14.10.16 Topic=Peer
+time="2017-10-26T00:30:01+09:00" level=info msg="Add a peer configuration for:10.14.10.16" Topic=Peer
+time="2017-10-26T00:30:01+09:00" level=info msg="Starting Check the HTTP API..."
+time="2017-10-26T00:30:01+09:00" level=info msg="OK, Access the HTTP API."
+time="2017-10-26T00:30:01+09:00" level=info msg="Starting installing the routing table..."
+time="2017-10-26T00:30:01+09:00" level=debug msg="IdleHoldTimer expired" Duration=0 Key=10.14.10.16 Topic=Peer
+time="2017-10-26T00:30:01+09:00" level=debug msg="state changed" Key=10.14.10.16 Topic=Peer new=BGP_FSM_ACTIVE old=BGP_FSM_IDLE reason=idle-hold-timer-expired
+time="2017-10-26T00:30:01+09:00" level=debug msg="create Destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=Table
+time="2017-10-26T00:30:01+09:00" level=debug msg="Processing destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-26T00:30:01+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-26T00:30:01+09:00" level=info msg="Adding flowspec prefix is match protocol tcp source 10.0.0.0/24 destination 12.0.0.0/24 source-port ==80 destination-port ==23 origin incomplete community no-export then rate-limit 100.000000"
+time="2017-10-26T00:30:02+09:00" level=debug msg="create Destination" Key="[destination:99.0.0.0/24][source:110.0.0.0/24][protocol:==icmp ][destination-port: ==10022][source-port: ==8080]" Topic=Table
+time="2017-10-26T00:30:02+09:00" level=debug msg="Processing destination" Key="[destination:99.0.0.0/24][source:110.0.0.0/24][protocol:==icmp ][destination-port: ==10022][source-port: ==8080]" Topic=table
+time="2017-10-26T00:30:02+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-26T00:30:02+09:00" level=info msg="Adding flowspec prefix is match aspath 100,200,2000 protocol icmp source 110.0.0.0/24 destination 99.0.0.0/24 source-port ==8080 destination-port ==10022 origin egp community no-export then rate-limit 10000.000000"
+time="2017-10-26T00:30:02+09:00" level=debug msg="create Destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=Table
+time="2017-10-26T00:30:02+09:00" level=debug msg="Processing destination" Key="[destination:210.0.0.0/24][source:110.0.0.0/24][destination-port: ==10023][source-port: ==20080]" Topic=table
+time="2017-10-26T00:30:02+09:00" level=debug msg="computeKnownBestPath known pathlist: 1" Topic=Table
+time="2017-10-26T00:30:02+09:00" level=info msg="Adding flowspec prefix is match source 110.0.0.0/24 destination 210.0.0.0/24 source-port ==20080 destination-port ==10023 origin incomplete then rate-limit 100.000000"
+time="2017-10-26T00:30:03+09:00" level=info msg="Finish the installing Jgob's routing table."
+time="2017-10-26T00:30:03+09:00" level=info msg="SUCCESS!! Routing table installing Full prefix in the routing table."
+time="2017-10-26T00:30:03+09:00" level=info msg="Total installing prefix's number is 3"
+time="2017-10-26T00:30:28+09:00" level=debug msg="failed to connect: timeout" Key=10.14.10.16 Topic=Peer
+time="2017-10-26T00:31:24+09:00" level=debug msg="Processing destination" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Topic=table
+time="2017-10-26T00:31:24+09:00" level=debug msg="Removing withdrawals" Key="[destination:12.0.0.0/24][source:10.0.0.0/24][protocol:==tcp ][destination-port: ==23][source-port: ==80]" Length=1 Topic=Table
+time="2017-10-26T00:31:24+09:00" level=info msg="Deleting flowspec uuid , 8c5b3e15-1279-48d4-8db2-772ff6a68bd3"

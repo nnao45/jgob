@@ -98,7 +98,6 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	lock := make(chan struct{}, 0)
-	var drop int
 	go func() {
 		<- lock
 		log.Info("Starting Check the HTTP API...")
@@ -116,12 +115,16 @@ func JgobServer(achan, schan, rchan chan string) {
 				x++
 			}
 		}
+
 		last, err := os.Open("jgob.route")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer last.Close()
+
 		log.Info("Starting installing the routing table...")
+		var drop int
+        	var total int
 		lastscanner := bufio.NewScanner(last)
 		for lastscanner.Scan() {
 			route := lastscanner.Text()
@@ -132,6 +135,7 @@ func JgobServer(achan, schan, rchan chan string) {
 				log.Error("Unable to loading route's json, ", route)
 			}
 			time.Sleep(500 * time.Millisecond)
+			total++
 		}
 		log.Info("Finish the installing Jgob's routing table.")
 		if drop == 0{
@@ -140,6 +144,7 @@ func JgobServer(achan, schan, rchan chan string) {
 			s := strconv.Itoa(drop) + " prefixes..."
 			log.Error("Sorry, FAILED loading prefix count is ", s)
 		}
+		log.Info("Total installing prefix's number is ", strconv.Itoa(total - drop))
 
 	}()
 

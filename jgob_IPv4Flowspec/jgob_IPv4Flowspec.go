@@ -10,7 +10,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func addog(text string, filename string) {
@@ -123,11 +122,6 @@ func main() {
 				return
 			}
 
-			t := time.Now()
-			tf := t.Format("2006-01-02 15:04:05.000")
-			logtf := "[" + tf + "](ADDING) '" + string(body[:length]) + "'\n"
-			addog(logtf, "jgob.log")
-
 			//parse json
 			var jsonBody map[string]string
 			err = json.Unmarshal(body[:length], &jsonBody)
@@ -235,11 +229,6 @@ func main() {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-
-			t := time.Now()
-			tf := t.Format("2006-01-02 15:04:05.000")
-			logtf := "[" + tf + "](DELETE) '" + string(body[:length]) + "'\n"
-			addog(logtf, "jgob.log")
 
 			//parse json
 			var jsonBody map[string]string

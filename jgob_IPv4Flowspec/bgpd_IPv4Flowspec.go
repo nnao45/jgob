@@ -44,13 +44,15 @@ func dog(text string, filename string) {
 func JgobServer(achan, schan, rchan chan string) {
 	Env_load()
 
-	log.SetLevel(log.DebugLevel)
-	gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err)
-	}
-	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, DisableColors: true})
-	log.SetOutput(gobgpdLogFile)
+	//log.SetLevel(log.DebugLevel)
+	//gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//log.SetFormatter(&log.TextFormatter{FullTimestamp: true, DisableColors: true})
+	//log.SetOutput(gobgpdLogFile)
+	log.SetOutput(ioutil.Discard)
+
 	if err := addSyslogHook(":syslog", "syslog"); err != nil{
 		log.Error("Unable to connect to syslog daemon, ", "syslog")
 	}

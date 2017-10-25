@@ -141,8 +141,7 @@ func JgobServer(achan, schan, rchan chan string) {
 		if drop == 0{
 			log.Info("SUCCESS!! Routing table installing Full prefix in the routing table.")
 		} else {
-			s := strconv.Itoa(drop) + " prefixes..."
-			log.Error("Sorry, FAILED loading prefix count is ", s)
+			log.Error("Sorry, FAILED loading prefix count is ", strconv.Itoa(drop))
 		}
 		log.Info("Total installing prefix's number is ", strconv.Itoa(total - drop))
 

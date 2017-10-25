@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 	"log/syslog"
+	"strconv"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 )
 
@@ -97,14 +98,18 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	lock := make(chan struct{}, 0)
+	var drop int
 	go func() {
 		<- lock
+		log.Info("Starting Check the HTTP API...")
 		x := 0
 		for {
 			if x > 2 {
+				log.Fatal("oh,sorry, unable to access http api...")
 				os.Exit(1)
 			}
 			if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
+				log.Info("OK, Access the HTTP API.")
 				break
 			} else {
 				time.Sleep(500 * time.Millisecond)
@@ -116,15 +121,24 @@ func JgobServer(achan, schan, rchan chan string) {
 			log.Fatal(err)
 		}
 		defer last.Close()
+		log.Info("Starting installing the routing table...")
 		lastscanner := bufio.NewScanner(last)
 		for lastscanner.Scan() {
 			route := lastscanner.Text()
 			values := url.Values{}
 			err := curlPost(values, route, os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
 			if err != nil {
+				drop++
 				log.Error("Unable to loading route's json, ", route)
 			}
 			time.Sleep(500 * time.Millisecond)
+		}
+		log.Info("Finish the installing Jgob's routing table.")
+		if drop == 0{
+			log.Info("SUCCESS!! Routing table installing Full prefix in the routing table.")
+		} else {
+			s := strconv.Itoa(drop) + " prefixes..."
+			log.Error("Sorry, FAILED loading prefix count is ", s)
 		}
 
 	}()
@@ -142,17 +156,17 @@ func JgobServer(achan, schan, rchan chan string) {
 		select {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
+			var err error
 			if strings.Contains(c, "match") {
-				_, err := pushNewFlowSpecPath(client, c, "IPv4")
-				if err != nil {
-					log.Error(err)
-				}
+				_, err = pushNewFlowSpecPath(client, c, "IPv4")
+				log.Info("Adding flowspec prefix is ", c)
 			} else {
-				err := deleteFlowSpecPath(client, c)
-				if err != nil {
-					log.Error(err)
-				}
+				err = deleteFlowSpecPath(client, c)
+				log.Info("Deleting flowspec uuid , ", c)
 			}
+			if err != nil {
+                        	log.Error(err)
+                        }
 			dog(showFlowSpecRib(client), "jgob.route")
 		case req := <-schan:
 			switch req {

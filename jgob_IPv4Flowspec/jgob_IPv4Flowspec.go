@@ -250,7 +250,8 @@ func main() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	//log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServeTLS(":443", "ssl/development/myself.crt", "ssl/development/myself.key", nil))
 }
 
 func checkAuth(r *http.Request) bool {

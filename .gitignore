@@ -1,2 +1,4 @@
 test/*
 jgob_IPv4Flowspec/jgob_IPv4Flowspec
+jgob_IPv4Flowspec/ssl/*
+jgob_IPv4Flowspec/.env

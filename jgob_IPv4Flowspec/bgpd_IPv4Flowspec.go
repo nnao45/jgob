@@ -505,6 +505,7 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 			return "Idle(PfxCt)"
 		}
 
+		/*
 		if fsm == "BGP_FSM_IDLE" {
 			return "Idle"
 		} else if fsm == "BGP_FSM_CONNECT" {
@@ -516,8 +517,10 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 		} else if fsm == "BGP_FSM_OPENCONFIRM" {
 			return "Confirm"
 		} else {
+			fmt.Println(fsm)
 			return "Establ"
-		}
+		}*/
+		return fsm
 	}
 
 	for i, p := range m {

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	//	"fmt"
 	"github.com/joho/godotenv"
 	"io"
 	"log"
@@ -10,7 +11,23 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
+
+type Prefix struct {
+	Uuid  string `json:"uuid"`
+	Attrs struct {
+		Aspath      string `json:"aspath"`
+		Protocol    string `json:"protocol"`
+		Src         string `json:"source"`
+		Dst         string `json:"destination"`
+		SrcPort     string `json:"source-port"`
+		DstPort     string `json:"destination-port"`
+		Origin      string `json:"origin"`
+		Communities string `json:"community"`
+		Extcomms    string `json:"extcomms"`
+	}
+}
 
 func addog(text string, filename string) {
 	var writer *bufio.Writer
@@ -65,8 +82,8 @@ func main() {
 			return
 		} else {
 			schan <- "route"
-			str := <- rchan
-			str = "▼show flowspec ipv4 in Gobgpd\n" + str
+			str := <-rchan
+			//str = "▼show flowspec ipv4 in Gobgpd\n" + str
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
@@ -81,7 +98,7 @@ func main() {
 			return
 		} else {
 			schan <- "nei"
-			str := <- rchan
+			str := <-rchan
 			str = "▼show bgp neighbor flowspec summary\n" + str
 			w.Header().Set("Content-Type", "text/plain")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
@@ -123,8 +140,8 @@ func main() {
 			}
 
 			//parse json
-			var jsonBody map[string]string
-			err = json.Unmarshal(body[:length], &jsonBody)
+			var prefixies []Prefix
+			err = json.Unmarshal(body[:length], &prefixies)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -132,67 +149,69 @@ func main() {
 
 			res := "match "
 
-			resAry := make([]string, 0, 20)
+			for _, p := range prefixies {
+				resAry := make([]string, 0, 20)
 
-			if jsonBody["aspath"] != "" {
-				s := "aspath " + jsonBody["aspath"]
-				resAry = append(resAry, s)
+				if p.Attrs.Aspath != "" {
+					s := "aspath " + p.Attrs.Aspath
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Protocol == "tcp" || p.Attrs.Protocol == "udp" || p.Attrs.Protocol == "icmp" {
+					s := "protocol " + p.Attrs.Protocol
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Src != "" {
+					s := "source " + p.Attrs.Src
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Dst != "" {
+					s := "destination " + p.Attrs.Dst
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.SrcPort != "" {
+					s := "source-port" + p.Attrs.SrcPort
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.DstPort != "" {
+					s := "destination-port" + p.Attrs.DstPort
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Origin == " i" {
+					p.Attrs.Origin = "igp"
+				} else if p.Attrs.Origin == " e" {
+					p.Attrs.Origin = "egp"
+				} else if p.Attrs.Origin == " ?" {
+					p.Attrs.Origin = "incomplete"
+				}
+
+				if p.Attrs.Origin == "igp" || p.Attrs.Origin == "egp" || p.Attrs.Origin == "incomplete" {
+					s := "origin " + p.Attrs.Origin
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Communities != "" {
+					s := "community " + p.Attrs.Communities
+					resAry = append(resAry, s)
+				}
+
+				if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
+					s := "then " + p.Attrs.Extcomms
+					resAry = append(resAry, s)
+				} else if p.Attrs.Extcomms != "" {
+					s := "then rate-limit " + p.Attrs.Extcomms
+					resAry = append(resAry, s)
+				}
+
+				restr := res + strings.Join(resAry, " ")
+				achan <- restr
+				time.Sleep(500 * time.Millisecond)
 			}
-
-			if jsonBody["protocol"] == "tcp" || jsonBody["protocol"] == "udp" || jsonBody["protocol"] == "icmp" {
-				s := "protocol " + jsonBody["protocol"]
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["source"] != "" {
-				s := "source " + jsonBody["source"]
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["destination"] != "" {
-				s := "destination " + jsonBody["destination"]
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["source-port"] != "" {
-				s := "source-port" + strings.Trim(jsonBody["source-port"], "true")
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["destination-port"] != "" {
-				s := "destination-port" + strings.Trim(jsonBody["destination-port"], "true")
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["origin"] == " i" {
-				jsonBody["origin"] = "igp"
-			} else if jsonBody["origin"] == " e" {
-				jsonBody["origin"] = "egp"
-			} else if jsonBody["origin"] == " ?" {
-				jsonBody["origin"] = "incomplete"
-			}
-
-			if jsonBody["origin"] == "igp" || jsonBody["origin"] == "egp" || jsonBody["origin"] == "incomplete" {
-				s := "origin " + jsonBody["origin"]
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["communities"] != "" {
-				s := "community " + jsonBody["communities"]
-				resAry = append(resAry, s)
-			}
-
-			if jsonBody["extcomms"] == "accept" || jsonBody["extcomms"] == "discard" {
-				s := "then " + jsonBody["extcomms"]
-				resAry = append(resAry, s)
-			} else if jsonBody["extcomms"] != "" {
-				s := "then rate-limit " + jsonBody["extcomms"]
-				resAry = append(resAry, s)
-			}
-
-			res = res + strings.Join(resAry, " ")
-			achan <- res
-
 			w.WriteHeader(http.StatusOK)
 		}
 	})
@@ -231,8 +250,15 @@ func main() {
 			}
 
 			//parse json
-			var jsonBody map[string]string
+			/*var jsonBody map[string]string
 			err = json.Unmarshal(body[:length], &jsonBody)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}*/
+
+			var prefixies []Prefix
+			err = json.Unmarshal(body[:length], &prefixies)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -240,12 +266,18 @@ func main() {
 
 			var res string
 
-			if jsonBody["uuid"] != "" {
-				res = jsonBody["uuid"]
+			/*
+				if jsonBody["uuid"] != "" {
+					res = jsonBody["uuid"]
+				}*/
+
+			for _, p := range prefixies {
+				if p.Uuid != "" {
+					res = p.Uuid
+				}
+
+				achan <- res
 			}
-
-			achan <- res
-
 			w.WriteHeader(http.StatusOK)
 		}
 	})

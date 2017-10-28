@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"bufio"
+	//	"bufio"
 	"context"
+	"fmt"
 	api "github.com/osrg/gobgp/api"
 	"github.com/osrg/gobgp/config"
 	"github.com/osrg/gobgp/gobgp/cmd"
@@ -12,20 +12,28 @@ import (
 	"github.com/osrg/gobgp/table"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 	"google.golang.org/grpc"
 	"io/ioutil"
+	"log/syslog"
 	"net/url"
 	"os"
+	//"strconv"
 	"strings"
 	"time"
-	"log/syslog"
-	"strconv"
-	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 )
 
 func exists(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil
+}
+
+func cat(filename string) string {
+	f, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(f)
 }
 
 func dog(text string, filename string) {
@@ -53,7 +61,7 @@ func JgobServer(achan, schan, rchan chan string) {
 	//log.SetOutput(gobgpdLogFile)
 	log.SetOutput(ioutil.Discard)
 
-	if err := addSyslogHook(":syslog", "syslog"); err != nil{
+	if err := addSyslogHook(":syslog", "syslog"); err != nil {
 		log.Error("Unable to connect to syslog daemon, ", "syslog")
 	}
 
@@ -101,7 +109,7 @@ func JgobServer(achan, schan, rchan chan string) {
 
 	lock := make(chan struct{}, 0)
 	go func() {
-		<- lock
+		<-lock
 		log.Info("Starting Check the HTTP API...")
 		x := 0
 		for {
@@ -118,35 +126,13 @@ func JgobServer(achan, schan, rchan chan string) {
 			}
 		}
 
-		last, err := os.Open("jgob.route")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer last.Close()
-
 		log.Info("Starting installing the routing table...")
-		var drop int
-        	var total int
-		lastscanner := bufio.NewScanner(last)
-		for lastscanner.Scan() {
-			route := lastscanner.Text()
-			values := url.Values{}
-			err := curlPost(values, route, os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
-			if err != nil {
-				drop++
-				log.Error("Unable to loading route's json, ", route)
-			}
-			time.Sleep(500 * time.Millisecond)
-			total++
+		values := url.Values{}
+		err := curlPost(values, cat("jgob.route"), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+		if err != nil {
+			log.Error("Unable to loading route's json")
 		}
 		log.Info("Finish the installing Jgob's routing table.")
-		if drop == 0{
-			log.Info("SUCCESS!! Routing table installing Full prefix in the routing table.")
-		} else {
-			log.Error("Sorry, FAILED loading prefix count is ", strconv.Itoa(drop))
-		}
-		log.Info("Total installing prefix's number is ", strconv.Itoa(total - drop))
-
 	}()
 
 	timeout := grpc.WithTimeout(time.Second)
@@ -171,8 +157,8 @@ func JgobServer(achan, schan, rchan chan string) {
 				log.Info("Deleting flowspec uuid , ", c)
 			}
 			if err != nil {
-                        	log.Error(err)
-                        }
+				log.Error(err)
+			}
 			dog(showFlowSpecRib(client), "jgob.route")
 		case req := <-schan:
 			switch req {
@@ -188,7 +174,7 @@ func JgobServer(achan, schan, rchan chan string) {
 				rchan <- rsum
 			}
 		default:
-			if count == 0{
+			if count == 0 {
 				count++
 				lock <- struct{}{}
 			}
@@ -339,12 +325,18 @@ func showFlowSpecRib(client api.GobgpApiClient) string {
 	}
 	myNativeTable, err = res.Table.ToNativeTable()
 
-	for _, d := range myNativeTable.GetSortedDestinations() {
+	wc := len(myNativeTable.GetSortedDestinations())
+
+	for i, d := range myNativeTable.GetSortedDestinations() {
 		var ps []*table.Path
 		ps = d.GetAllKnownPathList()
 		s := showRouteToItem(ps)
 		sum = sum + s
+		if i+1 < wc {
+			sum = sum + ","
+		}
 	}
+	sum = "[" + sum + "]"
 	return sum
 }
 
@@ -375,7 +367,7 @@ func showRouteToItem(pathList []*table.Path) string {
 
 		apStr := strings.Replace(strings.Join(aspath, " "), " ", ",", -1)
 
-		apStr = `"aspath":"` + apStr + `", `
+		apStr = `"aspath":"` + apStr + `"`
 
 		var attrStr string
 		for _, s := range attr {
@@ -426,10 +418,10 @@ func showRouteToItem(pathList []*table.Path) string {
 
 		age = `"age":"` + age + `",`
 
-		uuid := `"uuid":"` + p.UUID().String() + `"`
+		uuid := `"uuid":"` + p.UUID().String() + `",`
 
 		// fill up the tree with items
-		str := fmt.Sprintf("{%s %s %s %s %s}\n", nlriStr, apStr, age, attrStr, uuid)
+		str := fmt.Sprintf("{%s %s \"attrs\":{%s %s %s}}", uuid, age, nlriStr, attrStr, apStr)
 		sum = sum + str
 	}
 	return sum
@@ -506,20 +498,20 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 		}
 
 		/*
-		if fsm == "BGP_FSM_IDLE" {
-			return "Idle"
-		} else if fsm == "BGP_FSM_CONNECT" {
-			return "Connect"
-		} else if fsm == "BGP_FSM_ACTIVE" {
-			return "Active"
-		} else if fsm == "BGP_FSM_OPENSENT" {
-			return "Sent"
-		} else if fsm == "BGP_FSM_OPENCONFIRM" {
-			return "Confirm"
-		} else {
-			fmt.Println(fsm)
-			return "Establ"
-		}*/
+			if fsm == "BGP_FSM_IDLE" {
+				return "Idle"
+			} else if fsm == "BGP_FSM_CONNECT" {
+				return "Connect"
+			} else if fsm == "BGP_FSM_ACTIVE" {
+				return "Active"
+			} else if fsm == "BGP_FSM_OPENSENT" {
+				return "Sent"
+			} else if fsm == "BGP_FSM_OPENCONFIRM" {
+				return "Confirm"
+			} else {
+				fmt.Println(fsm)
+				return "Establ"
+			}*/
 		return fsm
 	}
 

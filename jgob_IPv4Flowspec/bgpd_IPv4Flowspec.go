@@ -107,6 +107,18 @@ func JgobServer(achan, schan, rchan chan string) {
 		log.Error(err)
 	}
 
+	n = &config.Neighbor{
+		Config: config.NeighborConfig{
+			NeighborAddress: "10.14.10.17",
+			PeerAs:          65501,
+			PeerType:        config.PEER_TYPE_INTERNAL,
+		},
+	}
+
+	if err := s.AddNeighbor(n); err != nil {
+		log.Error(err)
+	}
+
 	lock := make(chan struct{}, 0)
 	go func() {
 		<-lock
@@ -167,11 +179,12 @@ func JgobServer(achan, schan, rchan chan string) {
 				rchan <- showFlowSpecRib(client)
 			case "nei":
 				client := api.NewGobgpApiClient(conn)
-				var rsum string
-				for _, s := range showBgpNeighbor(client) {
-					rsum = rsum + s
-				}
-				rchan <- rsum
+				//var rsum string
+				//for _, s := range showBgpNeighbor(client) {
+				//	rsum = rsum + s
+				//}
+				//rchan <- rsum
+				rchan <- showBgpNeighbor(client)
 			}
 		default:
 			if count == 0 {
@@ -447,8 +460,8 @@ func formatTimedelta(d int64) string {
 	}
 }
 
-func showBgpNeighbor(client api.GobgpApiClient) []string {
-	dumpResult := []string{}
+func showBgpNeighbor(client api.GobgpApiClient) string {
+	var dumpResult string
 	var NeighReq api.GetNeighborRequest
 	NeighResp, e := client.GetNeighbor(context.Background(), &NeighReq)
 	if e != nil {
@@ -459,8 +472,6 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 	maxaslen := 0
 	maxtimelen := len("Up/Down")
 	timedelta := []string{}
-
-	// sort.Sort(m)
 
 	now := time.Now()
 	for _, p := range m {
@@ -485,10 +496,6 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 		}
 		timedelta = append(timedelta, timeStr)
 	}
-	var format string
-	format = "%-" + fmt.Sprint(maxaddrlen) + "s" + " %" + fmt.Sprint(maxaslen) + "s" + " %" + fmt.Sprint(maxtimelen) + "s"
-	format += " %-11s |%11s %8s %8s\n"
-	dumpResult = append(dumpResult, fmt.Sprintf(format, "Peer", "AS", "Up/Down", "State", "#Advertised", "Received", "Accepted"))
 	format_fsm := func(admin api.PeerState_AdminState, fsm string) string {
 		switch admin {
 		case api.PeerState_DOWN:
@@ -496,22 +503,6 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 		case api.PeerState_PFX_CT:
 			return "Idle(PfxCt)"
 		}
-
-		/*
-			if fsm == "BGP_FSM_IDLE" {
-				return "Idle"
-			} else if fsm == "BGP_FSM_CONNECT" {
-				return "Connect"
-			} else if fsm == "BGP_FSM_ACTIVE" {
-				return "Active"
-			} else if fsm == "BGP_FSM_OPENSENT" {
-				return "Sent"
-			} else if fsm == "BGP_FSM_OPENCONFIRM" {
-				return "Confirm"
-			} else {
-				fmt.Println(fsm)
-				return "Establ"
-			}*/
 		return fsm
 	}
 
@@ -520,7 +511,19 @@ func showBgpNeighbor(client api.GobgpApiClient) []string {
 		if p.Conf.NeighborInterface != "" {
 			neigh = p.Conf.NeighborInterface
 		}
-		dumpResult = append(dumpResult, fmt.Sprintf(format, neigh, fmt.Sprint(p.Conf.PeerAs), timedelta[i], format_fsm(p.Info.AdminState, p.Info.BgpState), fmt.Sprint(p.Info.Advertised), fmt.Sprint(p.Info.Received), fmt.Sprint(p.Info.Accepted)))
+		peer := `"peer":"` + fmt.Sprint(neigh) + `"`
+		age := `"age":"` + fmt.Sprint(timedelta[i]) + `"`
+		state := `"state":"` + format_fsm(p.Info.AdminState, p.Info.BgpState) + `"`
+		as := `"as":"` + fmt.Sprint(p.Conf.PeerAs) + `"`
+		advertised := `"advertised":"` + fmt.Sprint(p.Info.Advertised) + `"`
+		received := `"received":"` + fmt.Sprint(p.Info.Received) + `"`
+		accepted := `"accepted":"` + fmt.Sprint(p.Info.Accepted) + `"`
+
+		dumpResult = dumpResult + fmt.Sprintf("{%s, %s, %s, \"attrs\":{%s, \"routes\":{%s, %s, %s}}}", peer, age, state, as, advertised, received, accepted)
+		if i+1 < len(m) {
+			dumpResult = dumpResult + ","
+		}
 	}
+	dumpResult = "[" + dumpResult + "]"
 	return dumpResult
 }

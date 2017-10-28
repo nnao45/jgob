@@ -99,8 +99,8 @@ func main() {
 		} else {
 			schan <- "nei"
 			str := <-rchan
-			str = "▼show bgp neighbor flowspec summary\n" + str
-			w.Header().Set("Content-Type", "text/plain")
+			//str = "▼show bgp neighbor flowspec summary\n" + str
+			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
 		}

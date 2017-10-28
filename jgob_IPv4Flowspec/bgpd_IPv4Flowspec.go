@@ -19,9 +19,26 @@ import (
 	"net/url"
 	"os"
 	//"strconv"
+	"github.com/BurntSushi/toml"
 	"strings"
 	"time"
 )
+
+type TmlConfig struct {
+	JgobConfig JgobConfig
+}
+
+type JgobConfig struct {
+	As             uint32           `toml:"as"`
+	RouterId       string           `toml:"router-id"`
+	NeighborConfig []NeighborConfig `toml:"neighbor-config"`
+}
+
+type NeighborConfig struct {
+	PeerAs          uint32 `toml:"peer-as"`
+	NeighborAddress string `toml:"neighbor-address"`
+	PeerType        string `toml:"peer-type"`
+}
 
 func exists(filename string) bool {
 	_, err := os.Stat(filename)
@@ -73,11 +90,18 @@ func JgobServer(achan, schan, rchan chan string) {
 	g := api.NewGrpcServer(s, ":50051")
 	go g.Serve()
 
+	// loading config file
+	var jgobconfig TmlConfig
+	_, err := toml.DecodeFile("config.tml", &jgobconfig)
+	if err != nil {
+		panic(err)
+	}
+
 	// global configuration
 	global := &config.Global{
 		Config: config.GlobalConfig{
-			As:       65501,
-			RouterId: "172.30.1.176",
+			As:       jgobconfig.JgobConfig.As,
+			RouterId: jgobconfig.JgobConfig.RouterId,
 			Port:     -1, // gobgp won't listen on tcp:179
 		},
 	}
@@ -87,38 +111,47 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	// neighbor configuration
-	n := &config.Neighbor{
-		Config: config.NeighborConfig{
-			NeighborAddress: "10.14.10.16",
-			PeerAs:          65501,
-			PeerType:        config.PEER_TYPE_INTERNAL,
-		},
-		AfiSafis: []config.AfiSafi{
-			config.AfiSafi{
-				Config: config.AfiSafiConfig{
-					AfiSafiName: "ipv4-flowspec",
-					Enabled:     true,
+
+	for _, v := range jgobconfig.JgobConfig.NeighborConfig {
+		peertype := config.PEER_TYPE_INTERNAL
+		if v.PeerType == "internal" {
+			peertype = config.PEER_TYPE_INTERNAL
+		} else if v.PeerType == "external" {
+			peertype = config.PEER_TYPE_EXTERNAL
+		}
+		n := &config.Neighbor{
+			Config: config.NeighborConfig{
+				NeighborAddress: v.NeighborAddress,
+				PeerAs:          v.PeerAs,
+				PeerType:        peertype,
+			},
+			AfiSafis: []config.AfiSafi{
+				config.AfiSafi{
+					Config: config.AfiSafiConfig{
+						AfiSafiName: "ipv4-flowspec",
+						Enabled:     true,
+					},
 				},
 			},
-		},
-	}
+		}
 
-	if err := s.AddNeighbor(n); err != nil {
-		log.Error(err)
+		if err := s.AddNeighbor(n); err != nil {
+			log.Error(err)
+		}
 	}
+	/*
+		n = &config.Neighbor{
+			Config: config.NeighborConfig{
+				NeighborAddress: "10.14.10.17",
+				PeerAs:          65501,
+				PeerType:        config.PEER_TYPE_INTERNAL,
+			},
+		}
 
-	n = &config.Neighbor{
-		Config: config.NeighborConfig{
-			NeighborAddress: "10.14.10.17",
-			PeerAs:          65501,
-			PeerType:        config.PEER_TYPE_INTERNAL,
-		},
-	}
-
-	if err := s.AddNeighbor(n); err != nil {
-		log.Error(err)
-	}
-
+		if err := s.AddNeighbor(n); err != nil {
+			log.Error(err)
+		}
+	*/
 	lock := make(chan struct{}, 0)
 	go func() {
 		<-lock
@@ -179,11 +212,6 @@ func JgobServer(achan, schan, rchan chan string) {
 				rchan <- showFlowSpecRib(client)
 			case "nei":
 				client := api.NewGobgpApiClient(conn)
-				//var rsum string
-				//for _, s := range showBgpNeighbor(client) {
-				//	rsum = rsum + s
-				//}
-				//rchan <- rsum
 				rchan <- showBgpNeighbor(client)
 			}
 		default:
@@ -468,21 +496,10 @@ func showBgpNeighbor(client api.GobgpApiClient) string {
 		return dumpResult
 	}
 	m := NeighResp.Peers
-	maxaddrlen := 0
-	maxaslen := 0
-	maxtimelen := len("Up/Down")
 	timedelta := []string{}
 
 	now := time.Now()
 	for _, p := range m {
-		if i := len(p.Conf.NeighborInterface); i > maxaddrlen {
-			maxaddrlen = i
-		} else if j := len(p.Conf.NeighborAddress); j > maxaddrlen {
-			maxaddrlen = j
-		}
-		if len(fmt.Sprint(p.Conf.PeerAs)) > maxaslen {
-			maxaslen = len(fmt.Sprint(p.Conf.PeerAs))
-		}
 		timeStr := "never"
 		if p.Timers.State.Uptime != 0 {
 			t := int64(p.Timers.State.Downtime)
@@ -490,9 +507,6 @@ func showBgpNeighbor(client api.GobgpApiClient) string {
 				t = int64(p.Timers.State.Uptime)
 			}
 			timeStr = formatTimedelta(int64(now.Sub(time.Unix(int64(t), 0)).Seconds()))
-		}
-		if len(timeStr) > maxtimelen {
-			maxtimelen = len(timeStr)
 		}
 		timedelta = append(timedelta, timeStr)
 	}

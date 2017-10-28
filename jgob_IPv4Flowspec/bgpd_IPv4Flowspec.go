@@ -139,46 +139,10 @@ func JgobServer(achan, schan, rchan chan string) {
 			log.Error(err)
 		}
 	}
-	/*
-		n = &config.Neighbor{
-			Config: config.NeighborConfig{
-				NeighborAddress: "10.14.10.17",
-				PeerAs:          65501,
-				PeerType:        config.PEER_TYPE_INTERNAL,
-			},
-		}
 
-		if err := s.AddNeighbor(n); err != nil {
-			log.Error(err)
-		}
-	*/
 	lock := make(chan struct{}, 0)
-	go func() {
-		<-lock
-		log.Info("Starting Check the HTTP API...")
-		x := 0
-		for {
-			if x > 2 {
-				log.Fatal("oh,sorry, unable to access http api...")
-				os.Exit(1)
-			}
-			if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
-				log.Info("OK, Access the HTTP API.")
-				break
-			} else {
-				time.Sleep(500 * time.Millisecond)
-				x++
-			}
-		}
-
-		log.Info("Starting installing the routing table...")
-		values := url.Values{}
-		err := curlPost(values, cat("jgob.route"), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
-		if err != nil {
-			log.Error("Unable to loading route's json")
-		}
-		log.Info("Finish the installing Jgob's routing table.")
-	}()
+	defer close(lock)
+	go reloadingRib(lock)
 
 	timeout := grpc.WithTimeout(time.Second)
 	conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())
@@ -213,6 +177,9 @@ func JgobServer(achan, schan, rchan chan string) {
 			case "nei":
 				client := api.NewGobgpApiClient(conn)
 				rchan <- showBgpNeighbor(client)
+			case "reload":
+				go reloadingRib(lock)
+				lock <- struct{}{}
 			}
 		default:
 			if count == 0 {
@@ -221,6 +188,33 @@ func JgobServer(achan, schan, rchan chan string) {
 			}
 		}
 	}
+}
+
+func reloadingRib(lock chan struct{}) {
+	<-lock
+	log.Info("Starting Check the HTTP API...")
+	x := 0
+	for {
+		if x > 2 {
+			log.Fatal("oh,sorry, unable to access http api...")
+			os.Exit(1)
+		}
+		if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
+			log.Info("OK, Access the HTTP API.")
+			break
+		} else {
+			time.Sleep(500 * time.Millisecond)
+			x++
+		}
+	}
+
+	log.Info("Starting installing the routing table...")
+	values := url.Values{}
+	err := curlPost(values, cat("jgob.route"), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+	if err != nil {
+		log.Error("Unable to loading route's json")
+	}
+	log.Info("Finish the installing Jgob's routing table.")
 }
 
 func addSyslogHook(host, facility string) error {

@@ -83,7 +83,6 @@ func main() {
 		} else {
 			schan <- "route"
 			str := <-rchan
-			//str = "▼show flowspec ipv4 in Gobgpd\n" + str
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
@@ -99,10 +98,22 @@ func main() {
 		} else {
 			schan <- "nei"
 			str := <-rchan
-			//str = "▼show bgp neighbor flowspec summary\n" + str
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
+		}
+	})
+
+	http.HandleFunc("/reload", func(w http.ResponseWriter, r *http.Request) {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+			return
+		} else {
+			schan <- "reload"
+			w.Header().Set("Content-Type", "text/plain")
+			w.Write([]byte("Reloding routing table is done.\n"))
 		}
 	})
 

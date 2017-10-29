@@ -69,7 +69,7 @@ func main() {
 	l.Formatter = &logrus.TextFormatter{
 		DisableColors: true,
 	}
-	hook, err := lSyslog.NewSyslogHook("", "", syslog.LOG_INFO|syslog.LOG_SYSLOG, "jgobd")
+	hook, err := lSyslog.NewSyslogHook("", "syslog", syslog.LOG_INFO|syslog.LOG_SYSLOG, "jgobd")
 	if err == nil {
 		l.Hooks.Add(hook)
 	} else {

@@ -5,8 +5,13 @@ import (
 	"encoding/json"
 	//	"fmt"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
+	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
+
 	"io"
+	"io/ioutil"
 	"log"
+	"log/syslog"
 	"net/http"
 	"os"
 	"strconv"
@@ -56,9 +61,20 @@ func main() {
 	achan := make(chan string)
 	schan := make(chan string)
 	rchan := make(chan string)
-	//open := make(chan struct{}, 0)
 
 	go JgobServer(achan, schan, rchan)
+
+	l := logrus.New()
+	l.Out = ioutil.Discard
+	l.Formatter = &logrus.TextFormatter{
+		DisableColors: true,
+	}
+	hook, err := lSyslog.NewSyslogHook("", "", syslog.LOG_INFO|syslog.LOG_SYSLOG, "jgobd")
+	if err == nil {
+		l.Hooks.Add(hook)
+	} else {
+		panic(err)
+	}
 
 	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
@@ -294,7 +310,15 @@ func main() {
 	})
 
 	//log.Fatal(http.ListenAndServe(":8080", nil))
-	log.Fatal(http.ListenAndServeTLS(":443", "ssl/development/myself.crt", "ssl/development/myself.key", nil))
+
+	w := l.Writer()
+	defer w.Close()
+	srv := &http.Server{
+		Addr:     ":9443",
+		ErrorLog: log.New(w, "", 0),
+	}
+	//log.Fatal(http.ListenAndServeTLS(":443", "ssl/development/myself.crt", "ssl/development/myself.key", nil))
+	logrus.Fatal(srv.ListenAndServeTLS("ssl/development/myself.crt", "ssl/development/myself.key"))
 }
 
 func checkAuth(r *http.Request) bool {

@@ -13,7 +13,7 @@ import (
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
-	"google.golang.org/grpc"
+	grpc "google.golang.org/grpc"
 	"io/ioutil"
 	"log/syslog"
 	"net/url"

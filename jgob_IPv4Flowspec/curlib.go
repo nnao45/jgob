@@ -1,27 +1,27 @@
 package main
 
 import (
-	"io/ioutil"
 	"bytes"
+	"crypto/tls"
+	"io/ioutil"
 	"net/http"
 	"net/url"
-	"crypto/tls"
 )
 
 func curlCheck(user, pass string) bool {
 	//req, err := http.NewRequest("GET", "http://localhost:8080/test", nil)
-	req, err := http.NewRequest("GET", "https://localhost/test", nil)
+	req, err := http.NewRequest("GET", "https://localhost:9443/test", nil)
 	if err != nil {
 		return false
 	}
 	req.SetBasicAuth(user, pass)
 
 	tr := &http.Transport{
-		 TLSClientConfig: &tls.Config{
-			ServerName: "net-gobgp",
+		TLSClientConfig: &tls.Config{
+			ServerName:         "net-gobgp",
 			InsecureSkipVerify: true,
 		},
-	}				                 
+	}
 	client := &http.Client{
 		Transport: tr,
 	}
@@ -41,7 +41,7 @@ func curlCheck(user, pass string) bool {
 func curlPost(values url.Values, cmd, user, pass string) error {
 	jsondata := bytes.NewBuffer([]byte(cmd))
 	//req, err := http.NewRequest("POST", "http://localhost:8080/add", jsondata)
-	req, err := http.NewRequest("POST", "https://localhost/add", jsondata)
+	req, err := http.NewRequest("POST", "https://localhost:9443/add", jsondata)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func curlPost(values url.Values, cmd, user, pass string) error {
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			ServerName: "net-gobgp",
+			ServerName:         "net-gobgp",
 			InsecureSkipVerify: true,
 		},
 	}

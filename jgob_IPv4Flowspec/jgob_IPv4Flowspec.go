@@ -108,6 +108,21 @@ func main() {
 		}
 	})
 
+	rtr.HandleFunc("/global", func(w http.ResponseWriter, r *http.Request) {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+			return
+		} else {
+			schan <- "global"
+			str := <-rchan
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
+		}
+	})
+
 	rtr.HandleFunc("/nei", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)

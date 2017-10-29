@@ -4,6 +4,7 @@ import (
 	//	"bufio"
 	"context"
 	"fmt"
+	"github.com/BurntSushi/toml"
 	api "github.com/osrg/gobgp/api"
 	"github.com/osrg/gobgp/config"
 	"github.com/osrg/gobgp/gobgp/cmd"
@@ -18,8 +19,7 @@ import (
 	"log/syslog"
 	"net/url"
 	"os"
-	//"strconv"
-	"github.com/BurntSushi/toml"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -168,15 +168,34 @@ func JgobServer(achan, schan, rchan chan string) {
 			if err != nil {
 				log.Error(err)
 			}
-			dog(showFlowSpecRib(client), "jgob.route")
+			rib, e := showFlowSpecRib(client)
+			if e != nil {
+				log.Error(e)
+			}
+			dog(rib, "jgob.route")
 		case req := <-schan:
 			switch req {
 			case "route":
 				client := api.NewGobgpApiClient(conn)
-				rchan <- showFlowSpecRib(client)
+				rib, err := showFlowSpecRib(client)
+				if err != nil {
+					log.Error(err)
+				}
+				rchan <- rib
 			case "nei":
 				client := api.NewGobgpApiClient(conn)
-				rchan <- showBgpNeighbor(client)
+				nei, err := showBgpNeighbor(client)
+				if err != nil {
+					log.Error(err)
+				}
+				rchan <- nei
+			case "global":
+				client := api.NewGobgpApiClient(conn)
+				conf, err := showGlobalConfig(client)
+				if err != nil {
+					log.Error(err)
+				}
+				rchan <- conf
 			case "reload":
 				go reloadingRib(lock)
 				lock <- struct{}{}
@@ -301,11 +320,13 @@ func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte,
 	resource := api.Resource_GLOBAL
 	var uuid []byte
 	for _, path := range pathList {
-		r, err := client.AddPath(context.Background(), &api.AddPathRequest{
+		a := &api.AddPathRequest{
 			Resource: resource,
 			VrfId:    vrfID,
 			Path:     api.ToPathApi(path),
-		})
+		}
+
+		r, err := client.AddPath(context.Background(), a)
 		if err != nil {
 			return nil, err
 		}
@@ -340,7 +361,40 @@ func deleteFlowSpecPathFromUuid(client api.GobgpApiClient, uuid []byte) error {
 	return nil
 }
 
-func showFlowSpecRib(client api.GobgpApiClient) string {
+func showGlobalConfig(client api.GobgpApiClient) (string, error) {
+	var addl string
+	conf, err := showGlobalConfigRow(client)
+	if err != nil {
+		return "", err
+	}
+	as := `"as":"` + fmt.Sprint(conf.Config.As) + `",`
+	routerId := `"router-id":"` + fmt.Sprint(conf.Config.RouterId) + `",`
+	for i, addr := range conf.Config.LocalAddressList {
+		addl = addl + `"listen-addr-` + strconv.Itoa(i) + `":"` + addr + `"`
+		if i+1 < len(conf.Config.LocalAddressList) {
+			addl = addl + `, `
+		}
+	}
+	return fmt.Sprintf("[{%s %s \"lis-addr-list\":{%s}}]", as, routerId, addl), nil
+
+}
+
+func showGlobalConfigRow(client api.GobgpApiClient) (*config.Global, error) {
+	res, err := client.GetServer(context.Background(), &api.GetServerRequest{})
+	if err != nil {
+		return &config.Global{}, err
+	}
+	return &config.Global{
+		Config: config.GlobalConfig{
+			As:               res.Global.As,
+			RouterId:         res.Global.RouterId,
+			Port:             res.Global.ListenPort,
+			LocalAddressList: res.Global.ListenAddresses,
+		},
+	}, nil
+}
+
+func showFlowSpecRib(client api.GobgpApiClient) (string, error) {
 	var dsts []*api.Destination
 	var myNativeTable *table.Table
 	var sum string
@@ -356,7 +410,7 @@ func showFlowSpecRib(client api.GobgpApiClient) string {
 		},
 	})
 	if err != nil {
-		return ""
+		return "", err
 	}
 	myNativeTable, err = res.Table.ToNativeTable()
 
@@ -372,7 +426,7 @@ func showFlowSpecRib(client api.GobgpApiClient) string {
 		}
 	}
 	sum = "[" + sum + "]"
-	return sum
+	return sum, nil
 }
 
 func showRouteToItem(pathList []*table.Path) string {
@@ -482,12 +536,12 @@ func formatTimedelta(d int64) string {
 	}
 }
 
-func showBgpNeighbor(client api.GobgpApiClient) string {
+func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 	var dumpResult string
 	var NeighReq api.GetNeighborRequest
-	NeighResp, e := client.GetNeighbor(context.Background(), &NeighReq)
-	if e != nil {
-		return dumpResult
+	NeighResp, err := client.GetNeighbor(context.Background(), &NeighReq)
+	if err != nil {
+		return dumpResult, err
 	}
 	m := NeighResp.Peers
 	timedelta := []string{}
@@ -542,5 +596,5 @@ func showBgpNeighbor(client api.GobgpApiClient) string {
 		}
 	}
 	dumpResult = "[" + dumpResult + "]"
-	return dumpResult
+	return dumpResult, nil
 }

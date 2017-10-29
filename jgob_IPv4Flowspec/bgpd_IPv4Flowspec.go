@@ -519,15 +519,24 @@ func showBgpNeighbor(client api.GobgpApiClient) string {
 		if p.Conf.NeighborInterface != "" {
 			neigh = p.Conf.NeighborInterface
 		}
+
+		var peertype string
+		if p.Conf.PeerType == 0 {
+			peertype = "internal"
+		} else if p.Conf.PeerType == 1 {
+			peertype = "external"
+		}
+
 		peer := `"peer":"` + fmt.Sprint(neigh) + `"`
 		age := `"age":"` + fmt.Sprint(timedelta[i]) + `"`
 		state := `"state":"` + format_fsm(p.Info.AdminState, p.Info.BgpState) + `"`
 		as := `"as":"` + fmt.Sprint(p.Conf.PeerAs) + `"`
+		peertype = `"peer-type":"` + peertype + `"`
 		advertised := `"advertised":"` + fmt.Sprint(p.Info.Advertised) + `"`
 		received := `"received":"` + fmt.Sprint(p.Info.Received) + `"`
 		accepted := `"accepted":"` + fmt.Sprint(p.Info.Accepted) + `"`
 
-		dumpResult = dumpResult + fmt.Sprintf("{%s, %s, %s, \"attrs\":{%s, \"routes\":{%s, %s, %s}}}", peer, age, state, as, advertised, received, accepted)
+		dumpResult = dumpResult + fmt.Sprintf("{%s, %s, %s, \"attrs\":{%s, %s, \"routes\":{%s, %s, %s}}}", peer, age, state, as, peertype, advertised, received, accepted)
 		if i+1 < len(m) {
 			dumpResult = dumpResult + ","
 		}

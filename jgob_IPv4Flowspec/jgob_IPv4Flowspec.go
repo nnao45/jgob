@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	//	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 
+	"github.com/ajays20078/go-http-logger"
 	"io"
 	"io/ioutil"
 	"log"
@@ -76,7 +77,9 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+	rtr := mux.NewRouter()
+
+	rtr.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -90,7 +93,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -105,7 +108,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/nei", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/nei", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -120,7 +123,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/reload", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/reload", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -133,7 +136,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/add", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/add", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -243,7 +246,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/del", func(w http.ResponseWriter, r *http.Request) {
+	rtr.HandleFunc("/del", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
@@ -277,13 +280,6 @@ func main() {
 			}
 
 			//parse json
-			/*var jsonBody map[string]string
-			err = json.Unmarshal(body[:length], &jsonBody)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}*/
-
 			var prefixies []Prefix
 			err = json.Unmarshal(body[:length], &prefixies)
 			if err != nil {
@@ -292,11 +288,6 @@ func main() {
 			}
 
 			var res string
-
-			/*
-				if jsonBody["uuid"] != "" {
-					res = jsonBody["uuid"]
-				}*/
 
 			for _, p := range prefixies {
 				if p.Uuid != "" {
@@ -309,15 +300,21 @@ func main() {
 		}
 	})
 
-	//log.Fatal(http.ListenAndServe(":8080", nil))
-
 	w := l.Writer()
 	defer w.Close()
+
+	http.Handle("/", rtr)
+
+	access_file_handler, err := os.OpenFile("access_log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+
 	srv := &http.Server{
 		Addr:     ":9443",
 		ErrorLog: log.New(w, "", 0),
+		Handler:  httpLogger.WriteLog(http.DefaultServeMux, access_file_handler),
 	}
-	//log.Fatal(http.ListenAndServeTLS(":443", "ssl/development/myself.crt", "ssl/development/myself.key", nil))
 	logrus.Fatal(srv.ListenAndServeTLS("ssl/development/myself.crt", "ssl/development/myself.key"))
 }
 

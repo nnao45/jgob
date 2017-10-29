@@ -309,6 +309,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer access_file_handler.Close()
 
 	srv := &http.Server{
 		Addr:     ":9443",

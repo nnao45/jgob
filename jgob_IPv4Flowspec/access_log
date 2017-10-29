@@ -1,0 +1,4 @@
+2017/10/29 18:49:04 localhost:9443 [::1]:53994 "GET /test HTTP/1.1" 200 23 "Go-http-client/1.1" 215.888µs
+2017/10/29 18:49:05 localhost:9443 [::1]:53996 "POST /add HTTP/1.1" 200 0 "Go-http-client/1.1" 1.001161638s
+2017/10/29 18:49:37 108.61.200.94:9443 103.5.140.175:64645 "GET /nei HTTP/2.0" 200 493 "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0" 3.525726ms
+2017/10/29 18:49:40 108.61.200.94:9443 103.5.140.175:64645 "GET /route HTTP/2.0" 200 527 "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0" 1.64514ms

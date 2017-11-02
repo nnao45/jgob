@@ -158,9 +158,22 @@ func JgobServer(achan, schan, rchan chan string) {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
 			var err error
+			var u [] byte
+			var uu uuid.UUID
+			var uuu string
 			if strings.Contains(c, "match") {
-				_, err = pushNewFlowSpecPath(client, c, "IPv4")
-				log.Info("Adding flowspec prefix is ", c)
+				u, err = pushNewFlowSpecPath(client, c, "IPv4")
+				if err != nil {
+					log.Error(err)
+				} else {
+					log.Info("Adding flowspec prefix is ", c)
+				}
+				uu , err = uuid.FromBytes(u)
+				if err != nil {
+					log.Error(err)
+				}
+				uuu = `{"uuid":"` + uu.String() + `"}`
+				rchan <- uuu
 			} else {
 				err = deleteFlowSpecPath(client, c)
 				log.Info("Deleting flowspec uuid , ", c)
@@ -298,17 +311,18 @@ func addSyslogHook(host, facility string) error {
 }
 
 func pushNewFlowSpecPath(client api.GobgpApiClient, myCommand string, myAddrFam string) ([]byte, error) {
+	empty := make([]byte, 16)
 	if myAddrFam == "IPv4" {
 		path, err := cmd.ParsePath(bgp.RF_FS_IPv4_UC, strings.Split(myCommand, " "))
 		if err != nil {
-			log.Fatal(err)
+			return empty, err
 		}
 		return (addFlowSpecPath(client, []*table.Path{path}))
 	}
 	if myAddrFam == "IPv6" {
 		path, err := cmd.ParsePath(bgp.RF_FS_IPv6_UC, strings.Split(myCommand, " "))
 		if err != nil {
-			log.Fatal(err)
+			return empty, err
 		}
 		return (addFlowSpecPath(client, []*table.Path{path}))
 	}
@@ -538,8 +552,10 @@ func formatTimedelta(d int64) string {
 
 func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 	var dumpResult string
-	var NeighReq api.GetNeighborRequest
-	NeighResp, err := client.GetNeighbor(context.Background(), &NeighReq)
+	//NeighReq := api.GetNeighborRequest
+	NeighResp, err := client.GetNeighbor(context.Background(), &api.GetNeighborRequest{
+		EnableAdvertised: true,	
+	})
 	if err != nil {
 		return dumpResult, err
 	}
@@ -558,37 +574,34 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 		}
 		timedelta = append(timedelta, timeStr)
 	}
-	format_fsm := func(admin api.PeerState_AdminState, fsm string) string {
+	format_fsm := func(admin config.AdminState, fsm config.SessionState) string {
 		switch admin {
-		case api.PeerState_DOWN:
+		case config.ADMIN_STATE_DOWN:
 			return "Idle(Admin)"
-		case api.PeerState_PFX_CT:
+		case config.ADMIN_STATE_PFX_CT:
 			return "Idle(PfxCt)"
 		}
-		return fsm
+		return string(fsm)
 	}
 
-	for i, p := range m {
-		neigh := p.Conf.NeighborAddress
-		if p.Conf.NeighborInterface != "" {
-			neigh = p.Conf.NeighborInterface
+	for i, n := range m {
+		p, err := api.NewNeighborFromAPIStruct(n)
+		if err != nil {
+			return "", nil
 		}
-
-		var peertype string
-		if p.Conf.PeerType == 0 {
-			peertype = "internal"
-		} else if p.Conf.PeerType == 1 {
-			peertype = "external"
+		neigh := p.State.NeighborAddress
+		if p.State.NeighborInterface != "" {
+			neigh = p.State.NeighborInterface
 		}
 
 		peer := `"peer":"` + fmt.Sprint(neigh) + `"`
 		age := `"age":"` + fmt.Sprint(timedelta[i]) + `"`
-		state := `"state":"` + format_fsm(p.Info.AdminState, p.Info.BgpState) + `"`
-		as := `"as":"` + fmt.Sprint(p.Conf.PeerAs) + `"`
-		peertype = `"peer-type":"` + peertype + `"`
-		advertised := `"advertised":"` + fmt.Sprint(p.Info.Advertised) + `"`
-		received := `"received":"` + fmt.Sprint(p.Info.Received) + `"`
-		accepted := `"accepted":"` + fmt.Sprint(p.Info.Accepted) + `"`
+		state := `"state":"` + format_fsm(p.State.AdminState, p.State.SessionState) + `"`
+		as := `"as":"` + fmt.Sprint(p.State.PeerAs) + `"`
+		peertype := `"peer-type":"` + p.State.PeerType + `"`
+		advertised := `"advertised":"` + fmt.Sprint(p.State.AdjTable.Advertised) + `"`
+		received := `"received":"` + fmt.Sprint(p.State.AdjTable.Received) + `"`
+		accepted := `"accepted":"` + fmt.Sprint(p.State.AdjTable.Accepted) + `"`
 
 		dumpResult = dumpResult + fmt.Sprintf("{%s, %s, %s, \"attrs\":{%s, %s, \"routes\":{%s, %s, %s}}}", peer, age, state, as, peertype, advertised, received, accepted)
 		if i+1 < len(m) {

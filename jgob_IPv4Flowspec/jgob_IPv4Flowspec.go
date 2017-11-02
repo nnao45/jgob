@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"bufio"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -192,7 +193,7 @@ func main() {
 				return
 			}
 
-			res := "match "
+			reqAry := make([]string, 0, 50)
 
 			for _, p := range prefixies {
 				resAry := make([]string, 0, 20)
@@ -253,11 +254,20 @@ func main() {
 					resAry = append(resAry, s)
 				}
 
-				restr := res + strings.Join(resAry, " ")
-				achan <- restr
+				achan <- "match " + strings.Join(resAry, " ")
+				reqAry = append(reqAry, <- rchan)
 				time.Sleep(500 * time.Millisecond)
 			}
-			w.WriteHeader(http.StatusOK)
+			var reql string
+			for i, req := range reqAry {
+				if i+1 < len(reqAry) {
+					req = req + `,`
+				}
+				reql = reql + req
+			}
+			w.Header().Set("Content-Type", "application/json")
+			//w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
+			w.Write([]byte(fmt.Sprintf("[%s]",  reql)))
 		}
 	})
 

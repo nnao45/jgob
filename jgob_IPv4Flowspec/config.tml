@@ -7,12 +7,3 @@ peer-as = 65501
 neighbor-address = "10.14.10.16"
 peer-type = "internal"
 
-[[jgobconfig.neighbor-config]]
-peer-as = 65001
-neighbor-address = "10.0.0.1"
-peer-type = "external"
-
-[[jgobconfig.neighbor-config]]
-peer-as = 65502
-neighbor-address = "192.168.0.1"
-peer-type = "external"

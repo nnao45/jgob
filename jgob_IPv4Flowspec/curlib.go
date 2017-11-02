@@ -64,7 +64,7 @@ func curlPost(values url.Values, cmd, user, pass string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	execute(resp)
+	_ = execute(resp)
 
 	return nil
 }

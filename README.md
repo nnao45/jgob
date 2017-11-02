@@ -1,6 +1,6 @@
 # jgob
 Rest HTTPS API with json from GoBGP using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
-Add flowspec route, can throw json, can receive json
+Add flowspec route, throw json, receive json!!:kissing_heart:
 
 ## Overview
 this code is under implement suite.

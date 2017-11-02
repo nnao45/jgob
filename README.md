@@ -2,7 +2,7 @@
 Rest HTTPS API with json from GoBGP using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 
 ## Motivation
-I want to make very Mutual cooperation & HTTP frendly BGP daemon.
+I want to make very Mutual cooperation & HTTP frendly BGP daemon.  
 So this daemon, When You add flowspec route, throw json, receive json!!:kissing_heart:
 
 ## Overview

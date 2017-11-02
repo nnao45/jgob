@@ -265,9 +265,10 @@ func main() {
 				}
 				reql = reql + req
 			}
+			reql = fmt.Sprintf("[%s]",  reql)
 			w.Header().Set("Content-Type", "application/json")
-			//w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
-			w.Write([]byte(fmt.Sprintf("[%s]",  reql)))
+			w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
+			w.Write([]byte(reql))
 		}
 	})
 

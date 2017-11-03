@@ -158,7 +158,7 @@ func JgobServer(achan, schan, rchan chan string) {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
 			var err error
-			var u [] byte
+			var u []byte
 			var uu uuid.UUID
 			var uuu string
 			if strings.Contains(c, "match") {
@@ -181,7 +181,7 @@ func JgobServer(achan, schan, rchan chan string) {
 			if err != nil {
 				log.Error(err)
 			}
-			rib, e := showFlowSpecRib(client)
+			rib, e := showFlowSpecRib(client, true)
 			if e != nil {
 				log.Error(e)
 			}
@@ -190,7 +190,7 @@ func JgobServer(achan, schan, rchan chan string) {
 			switch req {
 			case "route":
 				client := api.NewGobgpApiClient(conn)
-				rib, err := showFlowSpecRib(client)
+				rib, err := showFlowSpecRib(client, false)
 				if err != nil {
 					log.Error(err)
 				}
@@ -408,7 +408,7 @@ func showGlobalConfigRow(client api.GobgpApiClient) (*config.Global, error) {
 	}, nil
 }
 
-func showFlowSpecRib(client api.GobgpApiClient) (string, error) {
+func showFlowSpecRib(client api.GobgpApiClient, isWriteRib bool) (string, error) {
 	var dsts []*api.Destination
 	var myNativeTable *table.Table
 	var sum string
@@ -433,7 +433,7 @@ func showFlowSpecRib(client api.GobgpApiClient) (string, error) {
 	for i, d := range myNativeTable.GetSortedDestinations() {
 		var ps []*table.Path
 		ps = d.GetAllKnownPathList()
-		s := showRouteToItem(ps)
+		s := showRouteToItem(ps, isWriteRib)
 		sum = sum + s
 		if i+1 < wc {
 			sum = sum + ","
@@ -443,7 +443,7 @@ func showFlowSpecRib(client api.GobgpApiClient) (string, error) {
 	return sum, nil
 }
 
-func showRouteToItem(pathList []*table.Path) string {
+func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 	maxPrefixLen := 100
 	maxNexthopLen := 20
 	var sum string
@@ -524,7 +524,12 @@ func showRouteToItem(pathList []*table.Path) string {
 		uuid := `"uuid":"` + p.UUID().String() + `",`
 
 		// fill up the tree with items
-		str := fmt.Sprintf("{%s %s \"attrs\":{%s %s %s}}", uuid, age, nlriStr, attrStr, apStr)
+		var str string
+		if !isWriteRib {
+			str = fmt.Sprintf("{%s %s \"attrs\":{%s %s %s}}", uuid, age, nlriStr, attrStr, apStr)
+		} else {
+			str = fmt.Sprintf("{\"attrs\":{%s %s %s}}", nlriStr, attrStr, apStr)
+		}
 		sum = sum + str
 	}
 	return sum

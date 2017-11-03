@@ -23,6 +23,7 @@ import (
 
 type Prefix struct {
 	Uuid  string `json:"uuid"`
+	Age   string `json:"age"`
 	Attrs struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`
@@ -255,7 +256,7 @@ func main() {
 				}
 
 				achan <- "match " + strings.Join(resAry, " ")
-				reqAry = append(reqAry, <- rchan)
+				reqAry = append(reqAry, <-rchan)
 				time.Sleep(500 * time.Millisecond)
 			}
 			var reql string

@@ -25,6 +25,7 @@ import (
 type Prefix struct {
 	Uuid  string `json:"uuid"`
 	Age   string `json:"age"`
+	Label string `json:"label"`
 	Attrs struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`
@@ -87,7 +88,7 @@ func init() {
 
 func main() {
 
-	achan := make(chan string)
+	achan := make(chan []string)
 	schan := make(chan string)
 	rchan := make(chan string)
 
@@ -280,8 +281,7 @@ func main() {
 					s := "then rate-limit " + p.Attrs.Extcomms
 					resAry = append(resAry, s)
 				}
-
-				achan <- "match " + strings.Join(resAry, " ")
+				achan <- []string{fmt.Sprint("match " + strings.Join(resAry, " ")), p.Label}
 				reqAry = append(reqAry, <-rchan)
 				time.Sleep(500 * time.Millisecond)
 			}
@@ -347,7 +347,7 @@ func main() {
 				if p.Uuid != "" {
 					res = p.Uuid
 				}
-				achan <- res
+				achan <- []string{res, ""}
 				reqAry = append(reqAry, <-rchan)
                                 time.Sleep(500 * time.Millisecond)
 			}

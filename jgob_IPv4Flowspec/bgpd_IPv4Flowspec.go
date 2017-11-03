@@ -24,6 +24,8 @@ import (
 	"time"
 )
 
+var LabelMap map[string]string
+
 type TmlConfig struct {
 	JgobConfig JgobConfig
 }
@@ -66,7 +68,7 @@ func dog(text string, filename string) {
 	}
 }
 
-func JgobServer(achan, schan, rchan chan string) {
+func JgobServer(achan chan []string, schan, rchan chan string) {
 	Env_load()
 
 	//log.SetLevel(log.DebugLevel)
@@ -141,8 +143,14 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	lock := make(chan struct{}, 0)
+	auto := make(chan struct{}, 0)
 	defer close(lock)
-	go reloadingRib(lock)
+	defer close(auto)
+
+	go func(){
+		reloadingRib(lock)
+		auto <- struct{}{}
+		}()
 
 	timeout := grpc.WithTimeout(time.Second)
 	conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())
@@ -153,6 +161,7 @@ func JgobServer(achan, schan, rchan chan string) {
 	}
 
 	var count int
+	LabelMap = map[string]string{}
 	for {
 		select {
 		case c := <-achan:
@@ -161,21 +170,25 @@ func JgobServer(achan, schan, rchan chan string) {
 			var u []byte
 			var uu uuid.UUID
 			var uuu string
-			if strings.Contains(c, "match") {
-				u, err = pushNewFlowSpecPath(client, c, "IPv4")
+			if strings.Contains(c[0], "match") {
+				u, err = pushNewFlowSpecPath(client, c[0], "IPv4")
 				if err != nil {
 					log.Error(err)
 				} else {
-					log.Info("Adding flowspec prefix is ", c)
+					log.Info("Adding flowspec prefix is ", c[0])
 				}
 				uu , err = uuid.FromBytes(u)
 				if err != nil {
 					log.Error(err)
 				}
-				uuu = `{"uuid":"` + uu.String() + `"}`
-				rchan <- uuu
+				uuu =  uu.String()
+				if c[1] != "" {
+					LabelMap[uuu] = c[1]
+				}
+				//uuu = `{"uuid":"` + uu.String() + `"}`
+				rchan <- `{"label":"` + c[1] + `", "uuid":"` + uuu + `"}`
 			} else {
-				derr := deleteFlowSpecPath(client, c)
+				derr := deleteFlowSpecPath(client, c[0])
 				if derr != nil {
 					log.Error(derr)
 					rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
@@ -217,6 +230,7 @@ func JgobServer(achan, schan, rchan chan string) {
 				count++
 				lock <- struct{}{}
 				go func() {
+					<-auto
 					for{
 						client := api.NewGobgpApiClient(conn)
 						writeFilefromRib(client)
@@ -537,12 +551,18 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 
 		uuid := `"uuid":"` + p.UUID().String() + `",`
 
+		var label string
+		if _, ok := LabelMap[p.UUID().String()]; ok {
+			label, _ = LabelMap[p.UUID().String()]
+		}
+		label = `"label":"` + label + `",`
+
 		// fill up the tree with items
 		var str string
 		if !isWriteRib {
-			str = fmt.Sprintf("{%s %s \"attrs\":{%s %s %s}}", uuid, age, nlriStr, attrStr, apStr)
+			str = fmt.Sprintf("{%s %s %s \"attrs\":{%s %s %s}}", label, uuid, age, nlriStr, attrStr, apStr)
 		} else {
-			str = fmt.Sprintf("{\"attrs\":{%s %s %s}}", nlriStr, attrStr, apStr)
+			str = fmt.Sprintf("{%s \"attrs\":{%s %s %s}}", label, nlriStr, attrStr, apStr)
 		}
 		sum = sum + str
 	}

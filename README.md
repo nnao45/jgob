@@ -123,9 +123,21 @@ neighbor-address = "10.0.0.1"
 peer-type = "internal"
 
 ```
+jgob config is very simple.
+```bash
+[jgobconfig]
+as = <local-as>
+router-id = <router-id>
 
+[[jgobconfig.neighbor-config]]
+peer-as = <remote-as>
+neighbor-address = <neighbor-address>
+peer-type = <peer-type>
+```
+address-family fixed, ipv4-flowspec.
+You should use only these param.
 
-### Show Bgp config status
+### Show Bgp config & status
 #### show bgp neighbor
 GET "/nei"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showneijpg.jpg)

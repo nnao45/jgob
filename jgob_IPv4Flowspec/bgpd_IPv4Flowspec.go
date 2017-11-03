@@ -182,11 +182,8 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
 					log.Error(err)
 				}
 				uuu =  uu.String()
-				if c[1] != "" {
-					LabelMap[uuu] = c[1]
-				}
-				//uuu = `{"uuid":"` + uu.String() + `"}`
-				rchan <- `{"label":"` + c[1] + `", "uuid":"` + uuu + `"}`
+				LabelMap[uuu] = c[1]
+				rchan <- `{"label":"` + LabelMap[uuu] + `", "uuid":"` + uuu + `"}`
 			} else {
 				derr := deleteFlowSpecPath(client, c[0])
 				if derr != nil {
@@ -194,7 +191,12 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
 					rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
 				} else {
 					log.Info("Deleting flowspec uuid , ", c)
-					rchan <- `{"msg":"` + "success." + `"}`
+					if _, ok := LabelMap[c[0]]; ok {
+					rchan <- `{"label":"` + LabelMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+					delete(LabelMap, c[0])
+					} else {
+					rchan <- `{"label":"` + "label not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+					}
 				}
 			}
 			writeFilefromRib(client)

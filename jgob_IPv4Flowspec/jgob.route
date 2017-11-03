@@ -1,1 +1,1 @@
-[{"label":"test-A", "attrs":{"destination":"2.8.0.0/24", "source":"10.0.0.0/24", "protocol":"udp", "destination-port":" ==99", "source-port":" ==2222",  "origin":" i","extcomms":"discard", "aspath":"65500"}},{"label":"TEST-B", "attrs":{"destination":"192.168.0.0/24", "source":"10.0.0.0/24", "protocol":"tcp", "destination-port":" ==9999", "source-port":" ==22222",  "origin":" i","extcomms":"100000.000000", "aspath":"65500,65000"}}]
+[]

@@ -1,5 +1,5 @@
 # jgob
-Rest HTTPS API with json from GoBGP using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
+Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 
 ## Motivation
 I want to make very Mutual cooperation & HTTP frendly BGP daemon.  
@@ -7,7 +7,7 @@ So this daemon, When You add flowspec route, throw json, receive json!!:kissing_
 
 ## Overview
 this code is under implement suite.
-- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library)
+- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
 - REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
 - HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
 - Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))

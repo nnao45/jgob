@@ -71,8 +71,10 @@ peer-type = "internal"
 
 ### Show Bgp config status
 #### show bgp neighbor
+GET "/nei"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showneijpg.jpg)
 #### show route flowspec
+GET "/route"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showroute.jpg)
 ### Add Bgp route
 POST new routes to "/add"
@@ -83,7 +85,7 @@ this is adding route's universally unique id. This Using Deleting & Rib Manageme
 GET "/route", You can find that uuid, "74a0a6c7-d28d-484f-a168-055014cbdba1"  
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/lockroutes.jpg)
 ### Delete Bgp route
-You want to route delete, it's very easy.  
+If you want to route delete, it's very easy.  
 POST "/del" a route having uuid(if you will want to check uuid, GET "/route").
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/delete.jpg)  
 And receiving system messages.

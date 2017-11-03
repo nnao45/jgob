@@ -96,7 +96,7 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
         var jgobconfig TmlConfig
         _, err := toml.DecodeFile(*configFile, &jgobconfig)
         if err != nil {
-                panic(err)
+                log.Fatal(err)
         }
 
         // global configuration
@@ -150,7 +150,7 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
         go func(){
                 reloadingRib(lock)
                 auto <- struct{}{}
-                }()
+        }()
 
         timeout := grpc.WithTimeout(time.Second)
         conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())

@@ -1,5 +1,5 @@
 # jgob
-Rest HTTPS API with json from GoBGP using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
+Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 
 ## Motivation
 I want to make very Mutual cooperation & HTTP frendly BGP daemon.  

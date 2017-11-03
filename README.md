@@ -158,7 +158,7 @@ GET "/nei"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showneijpg.jpg)
 #### show route flowspec
 GET "/route"
-![result](https://github.com/nnao45/naoGifRepo/blob/master/showroute.jpg)
+![result](https://github.com/nnao45/naoGifRepo/blob/master/shoshoroute.jpg)
 ### Add Bgp route
 POST new routes to "/add" (multipath is ok, adding in array :innocent:)
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/addroute.jpg)  

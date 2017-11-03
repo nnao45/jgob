@@ -36,6 +36,70 @@ so you want to use "gobgp" client command, you will.
    |---/reload ... reloading rib from jgob.route(it's danger API...)
 ```
 
+## jgob Have json fomat routing table
+Plain text.
+```bash
+root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
+[
+  {
+    "uuid": "8807baa5-6ae5-41aa-835d-57714cc973f8",
+    "age": "00:05:03",
+    "attrs": {
+      "destination": "3.0.0.0/24",
+      "source": "2.0.0.0/24",
+      "protocol": "udp",
+      "destination-port": " ==22",
+      "source-port": " ==80",
+      "origin": " e",
+      "extcomms": "2000.000000",
+      "aspath": ""
+    }
+  },
+  {
+    "uuid": "6698fc5e-2273-4a32-a351-c3da9c4c8f2b",
+    "age": "00:05:02",
+    "attrs": {
+      "destination": "33.0.0.0/24",
+      "source": "22.0.0.0/24",
+      "protocol": "udp",
+      "destination-port": " ==22",
+      "source-port": " ==80",
+      "origin": " e",
+      "extcomms": "2000.000000",
+      "aspath": ""
+    }
+  },
+  {
+    "uuid": "43f1a96f-a77b-4011-8548-18659283e6e8",
+    "age": "00:05:02",
+    "attrs": {
+      "destination": "93.0.0.0/24",
+      "source": "92.0.0.0/24",
+      "protocol": "udp",
+      "destination-port": " ==22",
+      "source-port": " ==80",
+      "origin": " e",
+      "extcomms": "2000.000000",
+      "aspath": ""
+    }
+  },
+  {
+    "uuid": "22864c27-7a6d-4ed9-ad1a-c59a8dabb575",
+    "age": "00:00:00",
+    "attrs": {
+      "destination": "192.168.0.0/24",
+      "source": "10.0.0.0/24",
+      "protocol": "tcp",
+      "destination-port": " ==9999",
+      "source-port": " ==22222",
+      "origin": " i",
+      "extcomms": "100000.000000",
+      "aspath": "65500,65000"
+    }
+  }
+]
+```
+
 ## Demo
 ### infra
 ```bash

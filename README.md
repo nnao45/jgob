@@ -42,8 +42,6 @@ Plain text.
 root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
 [
   {
-    "uuid": "8807baa5-6ae5-41aa-835d-57714cc973f8",
-    "age": "00:05:03",
     "attrs": {
       "destination": "3.0.0.0/24",
       "source": "2.0.0.0/24",
@@ -56,8 +54,6 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
-    "uuid": "6698fc5e-2273-4a32-a351-c3da9c4c8f2b",
-    "age": "00:05:02",
     "attrs": {
       "destination": "33.0.0.0/24",
       "source": "22.0.0.0/24",
@@ -70,8 +66,6 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
-    "uuid": "43f1a96f-a77b-4011-8548-18659283e6e8",
-    "age": "00:05:02",
     "attrs": {
       "destination": "93.0.0.0/24",
       "source": "92.0.0.0/24",
@@ -84,8 +78,6 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
-    "uuid": "22864c27-7a6d-4ed9-ad1a-c59a8dabb575",
-    "age": "00:00:00",
     "attrs": {
       "destination": "192.168.0.0/24",
       "source": "10.0.0.0/24",

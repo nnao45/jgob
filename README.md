@@ -52,7 +52,8 @@ Plain text.
 root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
 [
   {
-    "attrs": {
+    "remark":"hoge"
+    "attrs": {
       "destination": "3.0.0.0/24",
       "source": "2.0.0.0/24",
       "protocol": "udp",
@@ -64,6 +65,7 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
+    "remark":"piyo"
     "attrs": {
       "destination": "33.0.0.0/24",
       "source": "22.0.0.0/24",
@@ -76,6 +78,7 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
+    "remark":"piyo"
     "attrs": {
       "destination": "93.0.0.0/24",
       "source": "92.0.0.0/24",
@@ -88,6 +91,7 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
+    "remark":"ponyo"
     "attrs": {
       "destination": "192.168.0.0/24",
       "source": "10.0.0.0/24",

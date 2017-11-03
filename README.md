@@ -78,7 +78,7 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
     }
   },
   {
-    "remark":"piyo"
+    "remark":"huga"
     "attrs": {
       "destination": "93.0.0.0/24",
       "source": "92.0.0.0/24",
@@ -161,19 +161,17 @@ GET "/route"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showroute.jpg)
 ### Add Bgp route
 POST new routes to "/add" (multipath is ok, adding in array :innocent:)
-![result](https://github.com/nnao45/naoGifRepo/blob/master/post_newroute.jpg)  
-Done, And received "uuid(it's example, "74a0a6c7-d28d-484f-a168-055014cbdba1")".  
-this is adding route's universally unique id. This Using Deleting & Rib Management.
-![result](https://github.com/nnao45/naoGifRepo/blob/master/responsenewroute.jpg)  
-GET "/route", You can find that uuid, "74a0a6c7-d28d-484f-a168-055014cbdba1"  
-![result](https://github.com/nnao45/naoGifRepo/blob/master/lockroutes.jpg)
+![result](https://github.com/nnao45/naoGifRepo/blob/master/addroute.jpg)  
+Done, And received "uuid"(adding route's universally unique id), and "remark"(adding route's remark, free string)
+This is Used Deleting & Rib Management.
+![result](https://github.com/nnao45/naoGifRepo/blob/master/responsenwroute.jpg)  
 ### Delete Bgp route
 If you want to route delete, it's very easy.(also, multipath is ok, adding in array :innocent:)  
 POST "/del" a route having uuid(if you will want to check uuid, GET "/route").  
-![result](https://github.com/nnao45/naoGifRepo/blob/master/delete.jpg)  
-And receiving system messages.
-![result](https://github.com/nnao45/naoGifRepo/blob/master/successer.jpg)  
-(if server internal faild, msg's values in direct error messages)
+![result](https://github.com/nnao45/naoGifRepo/blob/master/deleteroute.jpg)  
+And receiving delete route's uuid, remark, and system messages.
+![result](https://github.com/nnao45/naoGifRepo/blob/master/deletesuccess.jpg)  
+(if server internal faild, system messsages will be values in direct error messages)
 
 ## Info
 - I think that jgob is as flowspec controller, so may not be received routes.

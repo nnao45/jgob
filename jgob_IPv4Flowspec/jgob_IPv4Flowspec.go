@@ -323,7 +323,11 @@ func main() {
 
 				achan <- res
 			}
-			w.WriteHeader(http.StatusOK)
+			req := <-rchan
+			req = fmt.Sprintf("[%s]",  req)
+			w.Header().Set("Content-Type", "application/json")
+                        w.Header().Set("Content-Length", strconv.Itoa(len(req)))
+                        w.Write([]byte(req))
 		}
 	})
 

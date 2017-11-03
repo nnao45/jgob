@@ -175,11 +175,14 @@ func JgobServer(achan, schan, rchan chan string) {
 				uuu = `{"uuid":"` + uu.String() + `"}`
 				rchan <- uuu
 			} else {
-				err = deleteFlowSpecPath(client, c)
-				log.Info("Deleting flowspec uuid , ", c)
-			}
-			if err != nil {
-				log.Error(err)
+				derr := deleteFlowSpecPath(client, c)
+				if derr != nil {
+					log.Error(derr)
+					rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
+				} else {
+					log.Info("Deleting flowspec uuid , ", c)
+					rchan <- `{"msg":"` + "success." + `"}`
+				}
 			}
 			rib, e := showFlowSpecRib(client, true)
 			if e != nil {

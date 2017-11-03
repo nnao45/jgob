@@ -2,7 +2,7 @@
 Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 
 ## Motivation
-I want to make very Mutual cooperation & HTTP frendly BGP daemon.  
+I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
 So this daemon, When You add flowspec route, throw json, receive json!!:kissing_heart:
 
 ## Overview
@@ -91,6 +91,7 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
   }
 ]
 ```
+It's so unique? :kissing_smiling_eyes:
 
 ## Demo
 ### infra
@@ -123,9 +124,21 @@ neighbor-address = "10.0.0.1"
 peer-type = "internal"
 
 ```
+jgob config is very simple.
+```bash
+[jgobconfig]
+as = <local-as>
+router-id = <router-id>
 
+[[jgobconfig.neighbor-config]]
+peer-as = <remote-as>
+neighbor-address = <neighbor-address>
+peer-type = <peer-type>
+```
+address-family fixed, ipv4-flowspec.
+You should use only these param.
 
-### Show Bgp config status
+### Show Bgp config & status
 #### show bgp neighbor
 GET "/nei"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showneijpg.jpg)
@@ -133,7 +146,7 @@ GET "/nei"
 GET "/route"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/showroute.jpg)
 ### Add Bgp route
-POST new routes to "/add"
+POST new routes to "/add" (multipath is ok, adding in array :innocent:)
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/post_newroute.jpg)  
 Done, And received "uuid(it's example, "74a0a6c7-d28d-484f-a168-055014cbdba1")".  
 this is adding route's universally unique id. This Using Deleting & Rib Management.
@@ -141,20 +154,28 @@ this is adding route's universally unique id. This Using Deleting & Rib Manageme
 GET "/route", You can find that uuid, "74a0a6c7-d28d-484f-a168-055014cbdba1"  
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/lockroutes.jpg)
 ### Delete Bgp route
-If you want to route delete, it's very easy.  
-POST "/del" a route having uuid(if you will want to check uuid, GET "/route").
+If you want to route delete, it's very easy.(alos, multipath is ok, adding in array :innocent:)  
+POST "/del" a route having uuid(if you will want to check uuid, GET "/route").  
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/delete.jpg)  
 And receiving system messages.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/successer.jpg)  
 (if server internal faild, msg's values in direct error messages)
 
 ## Info
+- I think that jgob is as flowspec controller, so may not be received routes.
+- jgob is running auto sync interval 1sec "jgob.route" and GoBGP Rib(If you use "gobgp" cmd, no problem).
+- jgob's global configuration, Intentionally　can't change(add neighbor, delete neighbor, change router-id,,,), but you can use "gobgp" cmd, so this operation, use cmd.
 - jgob can receving protocol "tcp", "udp", "icmp".
 - jgob can receving flowsepc action (MBGP EXT_COMMUNITIES) "accept", "discard", "rate-limit".  
   this three action, using same keys "extcomms"
 
 Why selecting args?? sorry, when jgob pasing json all gobgp option, json formating is very difficult.
 You want to other option, you rewirte code, or make issue or pull request for me :)
+
+## Release note
+- now, βversion, may not stable:sweat_smile:
+
+***Have a nice go hacking days***:sparkles::wink:
 
 ## Writer & License
 jgob was writed by nnao45 (WORK:Network Engineer, Twitter:@A_Resas, MAIL:n4sekai5y@gmail.com).  

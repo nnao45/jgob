@@ -176,13 +176,14 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
                                         log.Error(err)
                                 } else {
                                         log.Info("Adding flowspec prefix is ", c[0])
-                                }
-                                uu , err = uuid.FromBytes(u)
-                                if err != nil {
-                                        log.Error(err)
-                                }
-                                uuu =  uu.String()
-                                RemarkMap[uuu] = c[1]
+					uu , err = uuid.FromBytes(u)
+					if err != nil {
+						log.Error(err)
+					} else {
+						uuu =  uu.String()
+						RemarkMap[uuu] = c[1]
+					}
+				}
                                 rchan <- `{"remark":"` + RemarkMap[uuu] + `", "uuid":"` + uuu + `"}`
                         } else {
                                 derr := deleteFlowSpecPath(client, c[0])
@@ -192,10 +193,10 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
                                 } else {
                                         log.Info("Deleting flowspec uuid , ", c)
                                         if _, ok := RemarkMap[c[0]]; ok {
-                                        rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
-                                        delete(RemarkMap, c[0])
+						rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						delete(RemarkMap, c[0])
                                         } else {
-                                        rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
                                         }
                                 }
                         }

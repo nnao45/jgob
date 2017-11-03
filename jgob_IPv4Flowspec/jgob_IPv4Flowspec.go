@@ -315,19 +315,27 @@ func main() {
 			}
 
 			var res string
+			reqAry := make([]string, 0, 50)
 
 			for _, p := range prefixies {
 				if p.Uuid != "" {
 					res = p.Uuid
 				}
-
 				achan <- res
+				reqAry = append(reqAry, <-rchan)
+                                time.Sleep(500 * time.Millisecond)
 			}
-			req := <-rchan
-			req = fmt.Sprintf("[%s]",  req)
+			var reql string
+                        for i, req := range reqAry {
+                                if i+1 < len(reqAry) {
+                                        req = req + `,`
+                                }
+                                reql = reql + req
+                        }
+                        reql = fmt.Sprintf("[%s]",  reql)
 			w.Header().Set("Content-Type", "application/json")
-                        w.Header().Set("Content-Length", strconv.Itoa(len(req)))
-                        w.Write([]byte(req))
+                        w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
+                        w.Write([]byte(reql))
 		}
 	})
 

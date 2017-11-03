@@ -1,1 +1,1 @@
-[{"attrs":{"destination":"3.0.0.0/24", "source":"2.0.0.0/24", "protocol":"udp", "destination-port":" ==22", "source-port":" ==80",  "origin":" e","extcomms":"2000.000000", "aspath":""}},{"attrs":{"destination":"33.0.0.0/24", "source":"22.0.0.0/24", "protocol":"udp", "destination-port":" ==22", "source-port":" ==80",  "origin":" e","extcomms":"2000.000000", "aspath":""}}]
+[]

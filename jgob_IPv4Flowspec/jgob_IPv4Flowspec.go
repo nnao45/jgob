@@ -122,6 +122,30 @@ func main() {
 		}
 	})
 
+	rtr.HandleFunc("/remark", func(w http.ResponseWriter, r *http.Request) {
+                if checkAuth(r) == false {
+                        w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+                        w.WriteHeader(401)
+                        w.Write([]byte("401 Unauthorized\n"))
+                        return
+                } else {
+			var i int
+			var str string
+			for u, r := range RemarkMap {
+				i++
+				s := `{"remark":"` + r +`", ` + `"uuid":"` + u  + `"}`
+				str = str + s
+				if i < len(RemarkMap) {
+					str = str + ","
+				}
+			}
+                        str = fmt.Sprintf("[%s]", str)
+                        w.Header().Set("Content-Type", "application/json")
+                        w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+                        w.Write([]byte(str))
+                }
+        })
+
 	rtr.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)

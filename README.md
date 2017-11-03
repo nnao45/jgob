@@ -97,7 +97,7 @@ And receiving system messages.
 - jgob can receving flowsepc action (MBGP EXT_COMMUNITIES) "accept", "discard", "rate-limit".  
   this three action, using same keys "extcomms"
 
-Why selecting args?? sorry, when jgob pasing json all gobgp option, formaing is very difficult.
+Why selecting args?? sorry, when jgob pasing json all gobgp option, json formating is very difficult.
 You want to other option, you rewirte code, or pull request for me :)
 
 ## Writer & License

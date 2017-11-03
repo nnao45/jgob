@@ -6,6 +6,28 @@ Concept, "Show config & Announce BGP UPDATE, throw json, receive json":kissing_h
 I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
 
 ## Usage
+Let's build jgob
+```bash
+$ git clone https://github.com/nnao45/jgob
+$ cd jgob
+$ go build
+```
+jgob use SSL, so you must make certification object.
+If you don't have, use `makeSSL.sh`.
+```bash
+$ cat makeSSL.sh
+#!/bin/sh
+
+openssl genrsa 2048 > myself.key
+openssl req -new -key myself.key > myself.csr
+openssl x509 -days 3650 -req -signkey myself.key < myself.csr > myself.crt
+mkdir -p ssl/development/
+mv myself.crt ssl/development
+mv myself.csr ssl/development
+mv myself.key ssl/development
+```
+And, jgob's Usage...
+
 ```bash
 Usage:
     jgob_IPv4Flowspec [-r route-file] [-f config-file]
@@ -204,7 +226,7 @@ And receiving delete route's uuid, remark, and system messages.
 ## Info
 - I think that jgob is as flowspec controller, so may not be received routes.
 - jgob is running auto sync interval 1sec "jgob.route" and GoBGP Rib(If you use "gobgp" cmd, no problem).
-- jgob's global configuration, Intentionally can't change(add neighbor, delete neighbor, change router-id,,,), but you can use "gobgp" cmd, so this operation, use cmd.
+- jgob's global configuration, Intentionally can't change(add neighbor, delete neighbor, change router-id...), but you can use "gobgp" cmd, so this operation, use cmd.
 - jgob can receving protocol "tcp", "udp", "icmp".
 - jgob can receving flowsepc action (MBGP EXT_COMMUNITIES) "accept", "discard", "rate-limit".  
   this three action, using same keys "extcomms"

@@ -18,7 +18,7 @@ this code is under implement suite.
 Running gRPC server with this Gobgp daemon,  
 so you want to use "gobgp" client command, you will.
 
-## API Map
+## HTTPS API Map
 
 ```bash
 

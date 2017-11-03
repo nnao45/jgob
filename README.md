@@ -164,7 +164,7 @@ this is adding route's universally unique id. This Using Deleting & Rib Manageme
 GET "/route", You can find that uuid, "74a0a6c7-d28d-484f-a168-055014cbdba1"  
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/lockroutes.jpg)
 ### Delete Bgp route
-If you want to route delete, it's very easy.(alos, multipath is ok, adding in array :innocent:)  
+If you want to route delete, it's very easy.(also, multipath is ok, adding in array :innocent:)  
 POST "/del" a route having uuid(if you will want to check uuid, GET "/route").  
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/delete.jpg)  
 And receiving system messages.

@@ -33,11 +33,15 @@ so you want to use "gobgp" client command, you will.
 ```bash
 
 /--┐
+   |---/test ..... simple test URI. Check living HTTPS API.
+   |
    |---/global ... show global configuration of Running Gobgp. 
    |
    |---/nei ...... show bgp ipv4 flowspec neighbor of Running Gobgp. 
    |
-   |---/route ...  show rib of address-family ipv4 flowspec of Running Gobgp. 
+   |---/route .... show a rib of address-family ipv4 flowspec of Running Gobgp. 
+   |
+   |---/remark ... show route's remark and uuid in a rib. 
    |
    |---/add ...... adding ipv4 flowspec routes with more bgp attribute.
    |

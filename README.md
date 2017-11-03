@@ -7,7 +7,7 @@ So this daemon, When You add flowspec route, throw json, receive json!!:kissing_
 
 ## Overview
 this code is under implement suite.
-- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library)
+- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
 - REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
 - HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
 - Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))

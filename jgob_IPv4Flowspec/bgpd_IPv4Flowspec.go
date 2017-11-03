@@ -92,7 +92,7 @@ func JgobServer(achan, schan, rchan chan string) {
 
 	// loading config file
 	var jgobconfig TmlConfig
-	_, err := toml.DecodeFile("config.tml", &jgobconfig)
+	_, err := toml.DecodeFile(*configFile, &jgobconfig)
 	if err != nil {
 		panic(err)
 	}
@@ -233,7 +233,7 @@ func writeFilefromRib(client api.GobgpApiClient) {
 	if e != nil {
 		log.Error(e)
         }
-        dog(rib, "jgob.route")
+        dog(rib, *routeFile)
 }
 
 func reloadingRib(lock chan struct{}) {
@@ -256,7 +256,7 @@ func reloadingRib(lock chan struct{}) {
 
 	log.Info("Starting installing the routing table...")
 	values := url.Values{}
-	err := curlPost(values, cat("jgob.route"), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+	err := curlPost(values, cat(*routeFile), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
 	if err != nil {
 		log.Error("Unable to loading route's json")
 	}

@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"flag"
 )
 
 type Prefix struct {
@@ -57,6 +58,31 @@ func Env_load() {
 		log.Fatal("Error loading .env file")
 
 	}
+}
+
+var configFile = flag.String("f", CONFIG_FILE, "")
+var routeFile = flag.String("r", ROUTE_FILE, "")
+var usage = `
+Usage:
+    jgob_IPv4Flowspec [-r route-file] [-f config-file]
+
+Examples:
+    jgob_IPv4Flowspec
+    jgob_IPv4Flowspec -r test.rib -f tokyo.tml
+
+`
+
+const (
+        CONFIG_FILE = "config.tml"
+        ROUTE_FILE = "jgob.route"
+)
+
+func init() {
+	flag.Usage = func() {
+		fmt.Printf(usage)
+	}
+
+	flag.Parse()
 }
 
 func main() {

@@ -5,6 +5,16 @@ Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 
 I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
 So this daemon, When You add flowspec route, throw json, receive json!!:kissing_heart:
 
+## Usage
+```bash
+Usage:
+    jgob_IPv4Flowspec [-r route-file] [-f config-file]
+
+Examples:
+    jgob_IPv4Flowspec
+    jgob_IPv4Flowspec -r test.rib -f tokyo.tml
+```
+
 ## Overview
 this code is under implement suite.
 - [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)

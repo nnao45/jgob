@@ -184,11 +184,7 @@ func JgobServer(achan, schan, rchan chan string) {
 					rchan <- `{"msg":"` + "success." + `"}`
 				}
 			}
-			rib, e := showFlowSpecRib(client, true)
-			if e != nil {
-				log.Error(e)
-			}
-			dog(rib, "jgob.route")
+			writeFilefromRib(client)
 		case req := <-schan:
 			switch req {
 			case "route":
@@ -220,9 +216,24 @@ func JgobServer(achan, schan, rchan chan string) {
 			if count == 0 {
 				count++
 				lock <- struct{}{}
+				go func() {
+					for{
+						client := api.NewGobgpApiClient(conn)
+						writeFilefromRib(client)
+						time.Sleep(1000 * time.Millisecond)
+					}
+				}()
 			}
 		}
 	}
+}
+
+func writeFilefromRib(client api.GobgpApiClient) {
+	rib, e := showFlowSpecRib(client, true)
+	if e != nil {
+		log.Error(e)
+        }
+        dog(rib, "jgob.route")
 }
 
 func reloadingRib(lock chan struct{}) {

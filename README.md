@@ -2,8 +2,8 @@
 Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 
 ## Motivation
+Concept, "Show config & Announce BGP UPDATE, throw json, receive json":kissing_heart:  
 I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
-So this daemon, When You add flowspec route, throw json, receive json!!:kissing_heart:
 
 ## Usage
 ```bash

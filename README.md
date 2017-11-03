@@ -146,7 +146,7 @@ neighbor-address = <neighbor-address>
 peer-type = <peer-type>
 ```
 address-family fixed, ipv4-flowspec.
-You should use only these param.
+You must use only these param, and toml format.
 
 ### Show Bgp config & status
 #### show bgp neighbor

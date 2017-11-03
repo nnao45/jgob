@@ -151,6 +151,7 @@ And receiving system messages.
 ## Info
 - I think that jgob is as flowspec controller, so may not be received routes.
 - jgob is running auto sync interval 1sec "jgob.route" and GoBGP Rib(If you use "gobgp" cmd, no problem).
+- jgob's global configuration, Intentionally　can't change(add neighbor, delete neighbor, change router-id,,,), but you can use "gobgp" cmd, so this operation, use cmd.
 - jgob can receving protocol "tcp", "udp", "icmp".
 - jgob can receving flowsepc action (MBGP EXT_COMMUNITIES) "accept", "discard", "rate-limit".  
   this three action, using same keys "extcomms"

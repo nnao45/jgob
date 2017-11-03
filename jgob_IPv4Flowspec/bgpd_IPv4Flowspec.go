@@ -24,7 +24,7 @@ import (
         "time"
 )
 
-var LabelMap map[string]string
+var RemarkMap map[string]string
 
 type TmlConfig struct {
         JgobConfig JgobConfig
@@ -161,7 +161,7 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
         }
 
         var count int
-        LabelMap = map[string]string{}
+        RemarkMap = map[string]string{}
         for {
                 select {
                 case c := <-achan:
@@ -182,8 +182,8 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
                                         log.Error(err)
                                 }
                                 uuu =  uu.String()
-                                LabelMap[uuu] = c[1]
-                                rchan <- `{"label":"` + LabelMap[uuu] + `", "uuid":"` + uuu + `"}`
+                                RemarkMap[uuu] = c[1]
+                                rchan <- `{"remark":"` + RemarkMap[uuu] + `", "uuid":"` + uuu + `"}`
                         } else {
                                 derr := deleteFlowSpecPath(client, c[0])
                                 if derr != nil {
@@ -191,11 +191,11 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
                                         rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
                                 } else {
                                         log.Info("Deleting flowspec uuid , ", c)
-                                        if _, ok := LabelMap[c[0]]; ok {
-                                        rchan <- `{"label":"` + LabelMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
-                                        delete(LabelMap, c[0])
+                                        if _, ok := RemarkMap[c[0]]; ok {
+                                        rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+                                        delete(RemarkMap, c[0])
                                         } else {
-                                        rchan <- `{"label":"` + "label not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+                                        rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
                                         }
                                 }
                         }
@@ -553,18 +553,18 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 
                 uuid := `"uuid":"` + p.UUID().String() + `",`
 
-                var label string
-                if _, ok := LabelMap[p.UUID().String()]; ok {
-                        label, _ = LabelMap[p.UUID().String()]
+                var remark string
+                if _, ok := RemarkMap[p.UUID().String()]; ok {
+                        remark, _ = RemarkMap[p.UUID().String()]
                 }
-                label = `"label":"` + label + `",`
+                remark = `"remark":"` + remark + `",`
 
                 // fill up the tree with items
                 var str string
                 if !isWriteRib {
-                        str = fmt.Sprintf("{%s %s %s \"attrs\":{%s %s %s}}", label, uuid, age, nlriStr, attrStr, apStr)
+                        str = fmt.Sprintf("{%s %s %s \"attrs\":{%s %s %s}}", remark, uuid, age, nlriStr, attrStr, apStr)
                 } else {
-                        str = fmt.Sprintf("{%s \"attrs\":{%s %s %s}}", label, nlriStr, attrStr, apStr)
+                        str = fmt.Sprintf("{%s \"attrs\":{%s %s %s}}", remark, nlriStr, attrStr, apStr)
                 }
                 sum = sum + str
         }

@@ -23,9 +23,9 @@ import (
 )
 
 type Prefix struct {
-	Uuid  string `json:"uuid"`
-	Age   string `json:"age"`
-	Label string `json:"label"`
+	Remark	string `json:"remark"`
+	Uuid	string `json:"uuid"`
+	Age	string `json:"age"`
 	Attrs struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`
@@ -281,7 +281,7 @@ func main() {
 					s := "then rate-limit " + p.Attrs.Extcomms
 					resAry = append(resAry, s)
 				}
-				achan <- []string{fmt.Sprint("match " + strings.Join(resAry, " ")), p.Label}
+				achan <- []string{fmt.Sprint("match " + strings.Join(resAry, " ")), p.Remark}
 				reqAry = append(reqAry, <-rchan)
 				time.Sleep(500 * time.Millisecond)
 			}

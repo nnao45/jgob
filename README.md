@@ -98,7 +98,7 @@ And receiving system messages.
   this three action, using same keys "extcomms"
 
 Why selecting args?? sorry, when jgob pasing json all gobgp option, json formating is very difficult.
-You want to other option, you rewirte code, or pull request for me :)
+You want to other option, you rewirte code, or make issue or pull request for me :)
 
 ## Writer & License
 jgob was writed by nnao45 (WORK:Network Engineer, Twitter:@A_Resas, MAIL:n4sekai5y@gmail.com).  

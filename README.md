@@ -46,7 +46,7 @@ so you want to use "gobgp" client command, you will.
    |---/reload ... reloading rib from jgob.route(it's danger API...)
 ```
 
-## jgob Have json fomat routing table
+## jgob have json fomat routing table
 Plain text.
 ```bash
 root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
@@ -107,6 +107,28 @@ root@ubu-bgp:/godev/jgob/jgob_IPv4Flowspec# cat jgob.route | jq .
 ```
 It's so unique? :kissing_smiling_eyes:
 
+## jgob's json struct
+```bash
+type Prefix struct {
+        Remark  string `json:"remark"`  //remarking this route, it's filed you take it easy to write. 
+        Uuid    string `json:"uuid"`    //this route's universally unique id.
+        Age     string `json:"age"`     //this route's aging time.
+        Attrs struct {
+                Aspath      string `json:"aspath"`              //this route flowspec attribute's as path.
+                Protocol    string `json:"protocol"`            //this route flowspec attribute's protobcol.
+                Src         string `json:"source"`              //this route flowspec attribute's src address.
+                Dst         string `json:"destination"`         //this route flowspec attribute's dst address.
+                SrcPort     string `json:"source-port"`         //this route flowspec attribute's src port.
+                DstPort     string `json:"destination-port"`    //this route flowspec attribute's dst port.  
+                Origin      string `json:"origin"`              //this route flowspec attribute's origin.  
+                Communities string `json:"community"`           //this route flowspec attribute's community. 
+                Extcomms    string `json:"extcomms"`            //this route flowspec attribute's extra community.
+                                                                  (for example, accept, discard, or rate-limit bps value)
+        }
+}
+
+```
+
 ## Demo
 ### infra
 ```bash
@@ -160,14 +182,16 @@ GET "/nei"
 GET "/route"
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/shoshoroute.jpg)
 ### Add Bgp route
-POST new routes to "/add" (multipath is ok, adding in array :innocent:)
+POST new routes to "/add" (multipath is ok, adding in array :innocent:)  
+Don't need to "age" value, "uuid" value.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/addroute.jpg)  
-Done, And received "uuid"(adding route's universally unique id), and "remark"(adding route's remark, free string)
+Done, And received "uuid"(adding route's universally unique id), and "remark"(adding route's remark, free string)  
 This is Used Deleting & Rib Management.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/responsenwroute.jpg)  
 ### Delete Bgp route
 If you want to route delete, it's very easy.(also, multipath is ok, adding in array :innocent:)  
 POST "/del" a route having uuid(if you will want to check uuid, GET "/route").  
+Need to only "uuid" value.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/deleteroute.jpg)  
 And receiving delete route's uuid, remark, and system messages.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/deletesuccess.jpg)  

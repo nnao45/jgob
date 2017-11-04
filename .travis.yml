@@ -23,5 +23,3 @@ go_import_path: "github.com/ajays20078/go-http-logger"
 
 sudo: required
 
-script: 
-          - /jgob_IPv4Flowspec/makeSSL.sh

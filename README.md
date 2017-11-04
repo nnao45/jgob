@@ -69,21 +69,21 @@ Examples:
 ```bash
 
 /--┐
-   |---/test ..... simple test URI. Check living HTTPS API.
+   |---/test ..... [GET] simple test URI. Check living HTTPS API.
    |
-   |---/global ... show global configuration of Running Gobgp. 
+   |---/global ... [GET] show global configuration of Running Gobgp. 
    |
-   |---/nei ...... show bgp ipv4 flowspec neighbor of Running Gobgp. 
+   |---/nei ...... [GET] show bgp ipv4 flowspec neighbor of Running Gobgp. 
    |
-   |---/route .... show a rib of address-family ipv4 flowspec of Running Gobgp. 
+   |---/route .... [GET] show a rib of address-family ipv4 flowspec of Running Gobgp. 
    |
-   |---/remark ... show route's remark and uuid in a rib. 
+   |---/remark ... [GET] show route's remark and uuid in a rib. 
    |
-   |---/add ...... adding ipv4 flowspec routes with more bgp attribute.
+   |---/add ...... [POST] adding ipv4 flowspec routes with more bgp attribute.
    |
-   |---/del ...... deleting ipv4 flowspec routes from uuid.
+   |---/del ...... [POST] deleting ipv4 flowspec routes from uuid.
    |
-   |---/reload ... reloading rib from jgob.route(it's danger API...)
+   |---/reload ... [GET] reloading rib from jgob.route(it's danger API...)
 ```
 
 ## jgob have json fomat routing table

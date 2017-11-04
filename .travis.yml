@@ -6,20 +6,21 @@ language: go
         - 1.9
         - master
 
-go_import_path: "github.com/BurntSushi/toml"
-go_import_path: "github.com/osrg/gobgp/api"
-go_import_path: "github.com/osrg/gobgp/config"
-go_import_path: "github.com/osrg/gobgp/gobgp/cmd"
-go_import_path: "github.com/osrg/gobgp/packet/bgp"
-go_import_path: "github.com/osrg/gobgp/server"
-go_import_path: "github.com/osrg/gobgp/table"
-go_import_path: "github.com/satori/go.uuid"
-go_import_path: "github.com/sirupsen/logrus"
-go_import_path: "github.com/sirupsen/logrus/hooks/syslog"
-go_import_path: "google.golang.org/grpc"
-go_import_path: "github.com/gorilla/mux"
-go_import_path: "github.com/joho/godotenv"
-go_import_path: "github.com/ajays20078/go-http-logger"
+go_import_path: 
+                - "github.com/BurntSushi/toml"
+                - "github.com/osrg/gobgp/api"
+                - "github.com/osrg/gobgp/config"
+                - "github.com/osrg/gobgp/gobgp/cmd"
+                - "github.com/osrg/gobgp/packet/bgp"
+                - "github.com/osrg/gobgp/server"
+                - "github.com/osrg/gobgp/table"
+                - "github.com/satori/go.uuid"
+                - "github.com/sirupsen/logrus"
+                - "github.com/sirupsen/logrus/hooks/syslog"
+                - "google.golang.org/grpc"
+                - "github.com/gorilla/mux"
+                - "github.com/joho/godotenv"
+                - "github.com/ajays20078/go-http-logger"
 
 sudo: required
 

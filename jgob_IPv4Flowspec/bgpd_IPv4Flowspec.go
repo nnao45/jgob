@@ -24,7 +24,7 @@ import (
 )
 
 // RemarkMap is route's remarking with uuid
-var RemarkMap map[string]string
+var RemarkMap map[string]interface{}
 
 // TmlConfig is toml forat config-file
 type TmlConfig struct {
@@ -69,6 +69,23 @@ func dog(text string, filename string) {
 	if err != nil {
 		log.Error("Unable to loading, ", filename)
 	}
+}
+
+func jsonizeFromMap(s map[string]interface{}) string {
+	r := `{`
+	var i int
+	var p string
+	for k, v := range s {
+		i++
+		p = `"` + k + `":"` + fmt.Sprint(v) + `"`
+		r = r + p
+		if i < len(s) {
+			r = r + `,`
+		} else {
+			r = r + `}`
+		}
+	}
+	return r
 }
 
 func jgobServer(achan chan []string, schan, rchan chan string) {
@@ -164,7 +181,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 	}
 
 	var count int
-	RemarkMap = map[string]string{}
+	RemarkMap = map[string]interface{}{}
 	for {
 		select {
 		case c := <-achan:
@@ -187,19 +204,23 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						RemarkMap[uuu] = c[1]
 					}
 				}
-				rchan <- `{"remark":"` + RemarkMap[uuu] + `", "uuid":"` + uuu + `"}`
+				//rchan <- `{"remark":"` + RemarkMap[uuu] + `", "uuid":"` + uuu + `"}`
+				rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[uuu], "uuid": uuu})
 			} else {
 				derr := deleteFlowSpecPath(client, c[0])
 				if derr != nil {
 					log.Error(derr)
-					rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
+					//rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
+					rchan <- jsonizeFromMap(map[string]interface{}{"msg": derr})
 				} else {
 					log.Info("Deleting flowspec uuid , ", c)
 					if _, ok := RemarkMap[c[0]]; ok {
-						rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						//rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})
 						delete(RemarkMap, c[0])
 					} else {
-						rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						//rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
+						rchan <- jsonizeFromMap(map[string]interface{}{"remark": "remark not found", "uuid": c[0], "msg": "Success!!"})
 					}
 				}
 			}
@@ -562,7 +583,7 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 
 		var remark string
 		if _, ok := RemarkMap[p.UUID().String()]; ok {
-			remark, _ = RemarkMap[p.UUID().String()]
+			remark = fmt.Sprint(RemarkMap[p.UUID().String()])
 		}
 		remark = `"remark":"` + remark + `",`
 

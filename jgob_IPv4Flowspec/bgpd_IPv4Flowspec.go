@@ -213,7 +213,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					//rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
 					rchan <- jsonizeFromMap(map[string]interface{}{"msg": derr})
 				} else {
-					log.Info("Deleting flowspec uuid , ", c)
+					log.Info("Deleting flowspec uuid , ", c[0])
 					if _, ok := RemarkMap[c[0]]; ok {
 						//rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
 						rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})

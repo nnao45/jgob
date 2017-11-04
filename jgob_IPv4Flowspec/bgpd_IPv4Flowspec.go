@@ -209,7 +209,6 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				} else {
 					log.Info("Deleting flowspec uuid , ", c[0])
 					if _, ok := RemarkMap[c[0]]; ok {
-						//rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})
 						jsonMap := &map[string]interface{}{
 							"remark": RemarkMap[c[0]],
 							"uuid": c[0],
@@ -222,7 +221,6 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						rchan <- string(j)
 						delete(RemarkMap, c[0])
 					} else {
-						//rchan <- jsonizeFromMap(map[string]interface{}{"remark": "remark not found", "uuid": c[0], "msg": "Success!!"})
 						jsonMap := &map[string]interface{}{
                                                         "remark": RemarkMap[c[0]],
                                                         "uuid": "remark not found",

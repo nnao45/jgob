@@ -204,22 +204,18 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						RemarkMap[uuu] = c[1]
 					}
 				}
-				//rchan <- `{"remark":"` + RemarkMap[uuu] + `", "uuid":"` + uuu + `"}`
 				rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[uuu], "uuid": uuu})
 			} else {
 				derr := deleteFlowSpecPath(client, c[0])
 				if derr != nil {
 					log.Error(derr)
-					//rchan <- `{"msg":"` + fmt.Sprint(derr) + `"}`
 					rchan <- jsonizeFromMap(map[string]interface{}{"msg": derr})
 				} else {
 					log.Info("Deleting flowspec uuid , ", c[0])
 					if _, ok := RemarkMap[c[0]]; ok {
-						//rchan <- `{"remark":"` + RemarkMap[c[0]] + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
 						rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})
 						delete(RemarkMap, c[0])
 					} else {
-						//rchan <- `{"remark":"` + "remark not found" + `", "uuid":"` + c[0] + `", "msg":"` + "success." + `"}`
 						rchan <- jsonizeFromMap(map[string]interface{}{"remark": "remark not found", "uuid": c[0], "msg": "Success!!"})
 					}
 				}
@@ -623,7 +619,6 @@ func formatTimedelta(d int64) string {
 
 func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 	var dumpResult string
-	//NeighReq := api.GetNeighborRequest
 	NeighResp, err := client.GetNeighbor(context.Background(), &api.GetNeighborRequest{
 		EnableAdvertised: true,
 	})

@@ -131,17 +131,6 @@ func main() {
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
-			/*
-				var i int
-				var str string
-				for u, r := range RemarkMap {
-					i++
-					s := `{"remark":"` + r + `", ` + `"uuid":"` + u + `"}`
-					str = str + s
-					if i < len(RemarkMap) {
-						str = str + ","
-					}
-				}*/
 			str := jsonizeFromMap(RemarkMap)
 			str = fmt.Sprintf("[%s]", str)
 			w.Header().Set("Content-Type", "application/json")

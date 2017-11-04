@@ -128,7 +128,7 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
 				PeerType:        peertype,
 			},
 			AfiSafis: []config.AfiSafi{
-				config.AfiSafi{
+				{
 					Config: config.AfiSafiConfig{
 						AfiSafiName: "ipv4-flowspec",
 						Enabled:     true,

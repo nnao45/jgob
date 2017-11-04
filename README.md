@@ -163,8 +163,7 @@ type Prefix struct {
                 DstPort     string `json:"destination-port"`    //this route flowspec attribute's dst port.  
                 Origin      string `json:"origin"`              //this route flowspec attribute's origin.  
                 Communities string `json:"community"`           //this route flowspec attribute's community. 
-                Extcomms    string `json:"extcomms"`            //this route flowspec attribute's extra community.
-                                                                  (for example, accept, discard, or rate-limit bps value)
+                Extcomms    string `json:"extcomms"`            //this route flowspec attribute's extra community(for example, accept, discard, or rate-limit bps value).
         }
 }
 

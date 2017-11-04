@@ -5,6 +5,21 @@ language: go
         - 1.8
         - 1.9
         - master
+go_import_path: 
+                - "github.com/BurntSushi/toml"
+                - "github.com/osrg/gobgp/api"
+                - "github.com/osrg/gobgp/config"
+                - "github.com/osrg/gobgp/gobgp/cmd"
+                - "github.com/osrg/gobgp/packet/bgp"
+                - "github.com/osrg/gobgp/server"
+                - "github.com/osrg/gobgp/table"
+                - "github.com/satori/go.uuid"
+                - "github.com/sirupsen/logrus"
+                - "github.com/sirupsen/logrus/hooks/syslog"
+                - "google.golang.org/grpc"
+                - "github.com/gorilla/mux"
+                - "github.com/joho/godotenv"
+                - "github.com/ajays20078/go-http-logger"
 before_script:
           - cd jgob_IPv4Flowspec/
 sudo: required

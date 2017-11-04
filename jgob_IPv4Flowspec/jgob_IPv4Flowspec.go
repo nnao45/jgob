@@ -1,14 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 
+	"flag"
 	"github.com/ajays20078/go-http-logger"
 	"io"
 	"io/ioutil"
@@ -19,14 +20,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"flag"
 )
 
 type Prefix struct {
-	Remark	string `json:"remark"`
-	Uuid	string `json:"uuid"`
-	Age	string `json:"age"`
-	Attrs struct {
+	Remark string `json:"remark"`
+	Uuid   string `json:"uuid"`
+	Age    string `json:"age"`
+	Attrs  struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`
 		Src         string `json:"source"`
@@ -74,8 +74,8 @@ Examples:
 `
 
 const (
-        CONFIG_FILE = "config.tml"
-        ROUTE_FILE = "jgob.route"
+	CONFIG_FILE = "config.tml"
+	ROUTE_FILE  = "jgob.route"
 )
 
 func init() {
@@ -123,28 +123,28 @@ func main() {
 	})
 
 	rtr.HandleFunc("/remark", func(w http.ResponseWriter, r *http.Request) {
-                if checkAuth(r) == false {
-                        w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
-                        w.WriteHeader(401)
-                        w.Write([]byte("401 Unauthorized\n"))
-                        return
-                } else {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+			return
+		} else {
 			var i int
 			var str string
 			for u, r := range RemarkMap {
 				i++
-				s := `{"remark":"` + r +`", ` + `"uuid":"` + u  + `"}`
+				s := `{"remark":"` + r + `", ` + `"uuid":"` + u + `"}`
 				str = str + s
 				if i < len(RemarkMap) {
 					str = str + ","
 				}
 			}
-                        str = fmt.Sprintf("[%s]", str)
-                        w.Header().Set("Content-Type", "application/json")
-                        w.Header().Set("Content-Length", strconv.Itoa(len(str)))
-                        w.Write([]byte(str))
-                }
-        })
+			str = fmt.Sprintf("[%s]", str)
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
+		}
+	})
 
 	rtr.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
@@ -316,7 +316,7 @@ func main() {
 				}
 				reql = reql + req
 			}
-			reql = fmt.Sprintf("[%s]",  reql)
+			reql = fmt.Sprintf("[%s]", reql)
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
 			w.Write([]byte(reql))
@@ -373,19 +373,19 @@ func main() {
 				}
 				achan <- []string{res, ""}
 				reqAry = append(reqAry, <-rchan)
-                                time.Sleep(500 * time.Millisecond)
+				time.Sleep(500 * time.Millisecond)
 			}
 			var reql string
-                        for i, req := range reqAry {
-                                if i+1 < len(reqAry) {
-                                        req = req + `,`
-                                }
-                                reql = reql + req
-                        }
-                        reql = fmt.Sprintf("[%s]",  reql)
+			for i, req := range reqAry {
+				if i+1 < len(reqAry) {
+					req = req + `,`
+				}
+				reql = reql + req
+			}
+			reql = fmt.Sprintf("[%s]", reql)
 			w.Header().Set("Content-Type", "application/json")
-                        w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
-                        w.Write([]byte(reql))
+			w.Header().Set("Content-Length", strconv.Itoa(len(reql)))
+			w.Write([]byte(reql))
 		}
 	})
 

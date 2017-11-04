@@ -289,7 +289,10 @@ func main() {
 					resAry = append(resAry, s)
 				}
 
-				if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
+				if p.Attrs.Extcomms == "" {
+					s := "then accept"
+					resAry = append(resAry, s)
+				} else if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
 					s := "then " + p.Attrs.Extcomms
 					resAry = append(resAry, s)
 				} else if p.Attrs.Extcomms != "" {

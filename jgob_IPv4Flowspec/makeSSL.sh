@@ -10,6 +10,10 @@ Japari Section
 nyanpasu.com
 
 
+
+
+
+
 EOF
 openssl x509 -days 3650 -req -signkey myself.key < myself.csr > myself.crt
 mkdir -p ssl/development/

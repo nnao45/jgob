@@ -1,7 +1,6 @@
 #!/bin/sh
 
 openssl genrsa 2048 > myself.key
-#openssl req -new -key myself.key > myself.csr
 openssl req -new -key myself.key <<EOF > myself.csr
 JP
 Tokyo

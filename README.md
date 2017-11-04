@@ -16,6 +16,7 @@ this code is under implement suite.
 - Easy [Toml](https://github.com/BurntSushi/toml) config files.
 - Having permanent routing table with json format.
 - When Reloading processes, loading last install routes.
+- Can remark route put a string which you like in a "remark" filed. 
 
 Running gRPC server with this Gobgp daemon,  
 so you want to use "gobgp" client command, you will.

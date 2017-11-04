@@ -1,4 +1,4 @@
-![Travis CI](https://travis-ci.org/nnao45/jgob.svg?branch=master)
+[![Travis CI](https://travis-ci.org/nnao45/jgob.svg?branch=master)](https://travis-ci.org/nnao45/jgob)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nnao45/jgob)](https://goreportcard.com/report/github.com/nnao45/jgob)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/nnao45/jgob/master/LICENSE)
 # jgob
@@ -7,6 +7,19 @@ Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 
 ## Motivation
 Concept, "Show config & Announce BGP UPDATE, throw json, receive json":kissing_heart:  
 I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
+## Overview
+this code is under implement suite.
+- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
+- REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
+- HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
+- Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))
+- Easy [Toml](https://github.com/BurntSushi/toml) config files.
+- Having permanent routing table with json format.
+- When Reloading processes, loading last install routes.
+- Can remark route put a string which you like in a "remark" field. 
+
+Running gRPC server with this Gobgp daemon,  
+so you want to use "gobgp" client command, you will.
 
 ## Usage
 Let's build jgob
@@ -22,13 +35,25 @@ $ cat makeSSL.sh
 #!/bin/sh
 
 openssl genrsa 2048 > myself.key
-openssl req -new -key myself.key > myself.csr
+openssl req -new -key myself.key <<EOF > myself.csr
+JP
+Tokyo
+Japari Town
+Japari Company
+Japari Section
+nyanpasu.com
+
+
+EOF
 openssl x509 -days 3650 -req -signkey myself.key < myself.csr > myself.crt
 mkdir -p ssl/development/
 mv myself.crt ssl/development
 mv myself.csr ssl/development
 mv myself.key ssl/development
 ```
+It's joke infomation :stuck_out_tongue_winking_eye:
+Do Use only to test.
+
 And, jgob's Usage...
 
 ```bash
@@ -39,20 +64,6 @@ Examples:
     jgob_IPv4Flowspec
     jgob_IPv4Flowspec -r test.rib -f tokyo.tml
 ```
-
-## Overview
-this code is under implement suite.
-- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
-- REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
-- HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
-- Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))
-- Easy [Toml](https://github.com/BurntSushi/toml) config files.
-- Having permanent routing table with json format.
-- When Reloading processes, loading last install routes.
-
-Running gRPC server with this Gobgp daemon,  
-so you want to use "gobgp" client command, you will.
-
 ## HTTPS API Map
 
 ```bash
@@ -151,8 +162,7 @@ type Prefix struct {
                 DstPort     string `json:"destination-port"`    //this route flowspec attribute's dst port.  
                 Origin      string `json:"origin"`              //this route flowspec attribute's origin.  
                 Communities string `json:"community"`           //this route flowspec attribute's community. 
-                Extcomms    string `json:"extcomms"`            //this route flowspec attribute's extra community.
-                                                                  (for example, accept, discard, or rate-limit bps value)
+                Extcomms    string `json:"extcomms"`            //this route flowspec attribute's extra community(for example, accept, discard, or rate-limit bps value).
         }
 }
 

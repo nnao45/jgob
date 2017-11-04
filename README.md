@@ -7,6 +7,18 @@ Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 
 ## Motivation
 Concept, "Show config & Announce BGP UPDATE, throw json, receive json":kissing_heart:  
 I want to make very Mutual cooperation & very HTTP frendly & very very simple flowspec BGP daemon.:laughing:  
+## Overview
+this code is under implement suite.
+- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
+- REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
+- HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
+- Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))
+- Easy [Toml](https://github.com/BurntSushi/toml) config files.
+- Having permanent routing table with json format.
+- When Reloading processes, loading last install routes.
+
+Running gRPC server with this Gobgp daemon,  
+so you want to use "gobgp" client command, you will.
 
 ## Usage
 Let's build jgob
@@ -51,20 +63,6 @@ Examples:
     jgob_IPv4Flowspec
     jgob_IPv4Flowspec -r test.rib -f tokyo.tml
 ```
-
-## Overview
-this code is under implement suite.
-- [GoBGP](https://github.com/osrg/gobgp) (Using GoBGP as Golang Library, so jgob get values from Native GoBGP API return)
-- REST HTTPS API(using [mux](https://github.com/gorilla/mux), having a unique URI return bgp infomation with json format)
-- HTTPS Access log(using [go-http-logger](https://github.com/ajays20078/go-http-logger))
-- Hooking syslog(using [logrus](https://github.com/sirupsen/logrus))
-- Easy [Toml](https://github.com/BurntSushi/toml) config files.
-- Having permanent routing table with json format.
-- When Reloading processes, loading last install routes.
-
-Running gRPC server with this Gobgp daemon,  
-so you want to use "gobgp" client command, you will.
-
 ## HTTPS API Map
 
 ```bash

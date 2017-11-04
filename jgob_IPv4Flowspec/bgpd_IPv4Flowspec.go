@@ -458,6 +458,9 @@ func showFlowSpecRib(client api.GobgpApiClient, isWriteRib bool) (string, error)
 		return "", err
 	}
 	myNativeTable, err = res.Table.ToNativeTable()
+	if err != nil {
+		return "", err
+	}
 
 	wc := len(myNativeTable.GetSortedDestinations())
 

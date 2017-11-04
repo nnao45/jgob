@@ -58,7 +58,6 @@ func curlPost(values url.Values, cmd, user, pass string) error {
 		Transport: tr,
 	}
 
-	//resp, err := http.DefaultClient.Do(req)
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

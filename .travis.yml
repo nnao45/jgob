@@ -9,3 +9,4 @@ before_script:
           - cd jgob_IPv4Flowspec/
 sudo: required
 
+script: go build

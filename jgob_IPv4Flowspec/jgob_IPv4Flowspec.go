@@ -48,7 +48,7 @@ func addog(text string, filename string) {
 	writer.Write(data)
 	writer.Flush()
 	if err != nil {
-		log.Fatal("Error loading %s file", filename)
+		log.Fatal("Error loading " + filename + " file")
 	}
 	defer f.Close()
 }

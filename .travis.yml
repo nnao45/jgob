@@ -21,6 +21,7 @@ before_script:
           - go get "github.com/gorilla/mux"
           - go get "github.com/joho/godotenv"
           - go get "github.com/ajays20078/go-http-logger"
+          ./makeSSL.sh
 sudo: required
 
 script: go build

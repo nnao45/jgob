@@ -1,5 +1,6 @@
 test/*
 jgob_IPv4Flowspec/jgob_IPv4Flowspec
 jgob_IPv4Flowspec/.env
+jgob_IPv4Flowspec/ssl/
 jgob_IPv4Flowspec/access_log
 jgob_IPv4Flowspec/config.tml

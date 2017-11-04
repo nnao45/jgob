@@ -18,9 +18,10 @@ import (
 	"log/syslog"
 	"net/url"
 	"os"
-	"strconv"
+	//"strconv"
 	"strings"
 	"time"
+	"encoding/json"
 )
 
 // RemarkMap is route's remarking with uuid
@@ -69,23 +70,6 @@ func dog(text string, filename string) {
 	if err != nil {
 		log.Error("Unable to loading, ", filename)
 	}
-}
-
-func jsonizeFromMap(s map[string]interface{}) string {
-	r := `{`
-	var i int
-	var p string
-	for k, v := range s {
-		i++
-		p = `"` + k + `":"` + fmt.Sprint(v) + `"`
-		r = r + p
-		if i < len(s) {
-			r = r + `,`
-		} else {
-			r = r + `}`
-		}
-	}
-	return r
 }
 
 func jgobServer(achan chan []string, schan, rchan chan string) {
@@ -186,37 +170,69 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 		select {
 		case c := <-achan:
 			client := api.NewGobgpApiClient(conn)
-			var err error
-			var u []byte
-			var uu uuid.UUID
-			var uuu string
 			if strings.Contains(c[0], "match") {
-				u, err = pushNewFlowSpecPath(client, c[0], "IPv4")
-				if err != nil {
-					log.Error(err)
+				var uuu string
+				u, err1 := pushNewFlowSpecPath(client, c[0], "IPv4")
+				if err1 != nil {
+					log.Error(err1)
 				} else {
 					log.Info("Adding flowspec prefix is ", c[0])
-					uu, err = uuid.FromBytes(u)
-					if err != nil {
-						log.Error(err)
+					uu, err2 := uuid.FromBytes(u)
+					if err2 != nil {
+						log.Error(err2)
 					} else {
 						uuu = uu.String()
 						RemarkMap[uuu] = c[1]
 					}
 				}
-				rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[uuu], "uuid": uuu})
+				jsonMap := &map[string]interface{}{
+						"remark": RemarkMap[uuu],
+						"uuid": uuu,
+					}
+				j, err4 := json.Marshal(jsonMap)
+				if err4 != nil {
+				        log.Error(err4)
+				}
+				rchan <- string(j)
 			} else {
-				derr := deleteFlowSpecPath(client, c[0])
-				if derr != nil {
-					log.Error(derr)
-					rchan <- jsonizeFromMap(map[string]interface{}{"msg": derr})
+				err5 := deleteFlowSpecPath(client, c[0])
+				if err5 != nil {
+					log.Error(err5)
+					jsonMap := &map[string]interface{}{
+						"msg": err5,
+					}
+					j, err6 := json.Marshal(jsonMap)
+					if err6 != nil {
+					       log.Error(err6)
+					}
+					rchan <- string(j)
 				} else {
 					log.Info("Deleting flowspec uuid , ", c[0])
 					if _, ok := RemarkMap[c[0]]; ok {
-						rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})
+						//rchan <- jsonizeFromMap(map[string]interface{}{"remark": RemarkMap[c[0]], "uuid": c[0], "msg": "Success!!"})
+						jsonMap := &map[string]interface{}{
+							"remark": RemarkMap[c[0]],
+							"uuid": c[0],
+							"msg": "Success!!",
+						}
+						j, err7 := json.Marshal(jsonMap)
+						if err7 != nil {
+							log.Error(err7)
+						}
+						rchan <- string(j)
 						delete(RemarkMap, c[0])
 					} else {
-						rchan <- jsonizeFromMap(map[string]interface{}{"remark": "remark not found", "uuid": c[0], "msg": "Success!!"})
+						//rchan <- jsonizeFromMap(map[string]interface{}{"remark": "remark not found", "uuid": c[0], "msg": "Success!!"})
+						jsonMap := &map[string]interface{}{
+                                                        "remark": RemarkMap[c[0]],
+                                                        "uuid": "remark not found",
+                                                        "msg": "Success!!",
+                                                }
+						j, err8 := json.Marshal(jsonMap)
+                                                if err8 != nil {
+                                                        log.Error(err8)
+                                                }
+                                                rchan <- string(j)
 					}
 				}
 			}
@@ -427,21 +443,20 @@ func deleteFlowSpecPathFromUUID(client api.GobgpApiClient, uuid []byte) error {
 }
 
 func showGlobalConfig(client api.GobgpApiClient) (string, error) {
-	var addl string
 	conf, err := showGlobalConfigRow(client)
 	if err != nil {
 		return "", err
 	}
-	as := `"as":"` + fmt.Sprint(conf.Config.As) + `",`
-	routerID := `"router-id":"` + fmt.Sprint(conf.Config.RouterId) + `",`
-	for i, addr := range conf.Config.LocalAddressList {
-		addl = addl + `"listen-addr-` + strconv.Itoa(i) + `":"` + addr + `"`
-		if i+1 < len(conf.Config.LocalAddressList) {
-			addl = addl + `, `
-		}
+	jsonMap := &map[string]interface{}{
+		"as":conf.Config.As,
+		"router-id":conf.Config.RouterId,
+		"listen-addr-list":conf.Config.LocalAddressList,
 	}
-	return fmt.Sprintf("[{%s %s \"lis-addr-list\":{%s}}]", as, routerID, addl), nil
-
+	json, err := json.Marshal(jsonMap)
+        if err != nil {
+		return "", err
+        }
+	return string(json), nil
 }
 
 func showGlobalConfigRow(client api.GobgpApiClient) (*config.Global, error) {
@@ -660,16 +675,25 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 			neigh = p.State.NeighborInterface
 		}
 
-		peer := `"peer":"` + fmt.Sprint(neigh) + `"`
-		age := `"age":"` + fmt.Sprint(timedelta[i]) + `"`
-		state := `"state":"` + formatFsm(p.State.AdminState, p.State.SessionState) + `"`
-		as := `"as":"` + fmt.Sprint(p.State.PeerAs) + `"`
-		peertype := `"peer-type":"` + p.State.PeerType + `"`
-		advertised := `"advertised":"` + fmt.Sprint(p.State.AdjTable.Advertised) + `"`
-		received := `"received":"` + fmt.Sprint(p.State.AdjTable.Received) + `"`
-		accepted := `"accepted":"` + fmt.Sprint(p.State.AdjTable.Accepted) + `"`
-
-		dumpResult = dumpResult + fmt.Sprintf("{%s, %s, %s, \"attrs\":{%s, %s, \"routes\":{%s, %s, %s}}}", peer, age, state, as, peertype, advertised, received, accepted)
+		jsonMap := &map[string]interface{}{
+			"peer":neigh,
+			"age":timedelta[i],
+			"state":formatFsm(p.State.AdminState, p.State.SessionState),
+			"attrs":map[string]interface{}{
+				"as":p.State.PeerAs,
+				"peer-type":p.State.PeerType,
+				"routes":map[string]interface{}{
+					"advertised":p.State.AdjTable.Advertised,
+					"received":p.State.AdjTable.Received,
+					"accepted":p.State.AdjTable.Accepted,
+				},
+			},
+		}
+		json, err := json.Marshal(jsonMap)
+		if err != nil {
+			log.Error(err)
+		}
+		dumpResult = dumpResult + string(json)
 		if i+1 < len(m) {
 			dumpResult = dumpResult + ","
 		}

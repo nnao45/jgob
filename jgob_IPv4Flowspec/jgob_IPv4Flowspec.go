@@ -22,9 +22,10 @@ import (
 	"time"
 )
 
+//Prefix is jgob have route's all information struct
 type Prefix struct {
 	Remark string `json:"remark"`
-	Uuid   string `json:"uuid"`
+	UUID   string `json:"uuid"`
 	Age    string `json:"age"`
 	Attrs  struct {
 		Aspath      string `json:"aspath"`
@@ -53,7 +54,8 @@ func addog(text string, filename string) {
 	defer f.Close()
 }
 
-func Env_load() {
+// EnvLoad is dotenv func
+func EnvLoad() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -74,8 +76,10 @@ Examples:
 `
 
 const (
+	//CONFIG_FILE is config-file
 	CONFIG_FILE = "config.tml"
-	ROUTE_FILE  = "jgob.route"
+	//ROUTE_FILE is rib in file format
+	ROUTE_FILE = "jgob.route"
 )
 
 func init() {
@@ -92,7 +96,7 @@ func main() {
 	schan := make(chan string)
 	rchan := make(chan string)
 
-	go JgobServer(achan, schan, rchan)
+	go jgobServer(achan, schan, rchan)
 
 	l := logrus.New()
 	l.Out = ioutil.Discard
@@ -113,7 +117,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			str := "JGOB is up and running\n"
 			w.Header().Set("Content-Type", "text/plain")
@@ -127,7 +130,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			var i int
 			var str string
@@ -151,7 +153,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			schan <- "route"
 			str := <-rchan
@@ -166,7 +167,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			schan <- "global"
 			str := <-rchan
@@ -181,7 +181,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			schan <- "nei"
 			str := <-rchan
@@ -196,7 +195,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 			schan <- "reload"
 			w.Header().Set("Content-Type", "text/plain")
@@ -209,7 +207,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 
 			if r.Method != "POST" {
@@ -328,7 +325,6 @@ func main() {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
-			return
 		} else {
 
 			if r.Method != "POST" {
@@ -368,8 +364,8 @@ func main() {
 			reqAry := make([]string, 0, 50)
 
 			for _, p := range prefixies {
-				if p.Uuid != "" {
-					res = p.Uuid
+				if p.UUID != "" {
+					res = p.UUID
 				}
 				achan <- []string{res, ""}
 				reqAry = append(reqAry, <-rchan)
@@ -394,22 +390,22 @@ func main() {
 
 	http.Handle("/", rtr)
 
-	access_file_handler, err := os.OpenFile("access_log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	accessFile, err := os.OpenFile("access_log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
-	defer access_file_handler.Close()
+	defer accessFile.Close()
 
 	srv := &http.Server{
 		Addr:     ":9443",
 		ErrorLog: log.New(w, "", 0),
-		Handler:  httpLogger.WriteLog(http.DefaultServeMux, access_file_handler),
+		Handler:  httpLogger.WriteLog(http.DefaultServeMux, accessFile),
 	}
 	logrus.Fatal(srv.ListenAndServeTLS("ssl/development/myself.crt", "ssl/development/myself.key"))
 }
 
 func checkAuth(r *http.Request) bool {
-	Env_load()
+	EnvLoad()
 	username, password, ok := r.BasicAuth()
 	if ok == false {
 		return false

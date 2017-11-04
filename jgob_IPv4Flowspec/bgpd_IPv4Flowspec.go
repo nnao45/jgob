@@ -23,18 +23,22 @@ import (
 	"time"
 )
 
+// RemarkMap is route's remarking with uuid
 var RemarkMap map[string]string
 
+// TmlConfig is toml forat config-file
 type TmlConfig struct {
 	JgobConfig JgobConfig
 }
 
+// JgobConfig is parsed from TmlConfig
 type JgobConfig struct {
 	As             uint32           `toml:"as"`
-	RouterId       string           `toml:"router-id"`
+	RouterID       string           `toml:"router-id"`
 	NeighborConfig []NeighborConfig `toml:"neighbor-config"`
 }
 
+// NeighborConfig is JgobConfig's struct
 type NeighborConfig struct {
 	PeerAs          uint32 `toml:"peer-as"`
 	NeighborAddress string `toml:"neighbor-address"`
@@ -67,8 +71,8 @@ func dog(text string, filename string) {
 	}
 }
 
-func JgobServer(achan chan []string, schan, rchan chan string) {
-	Env_load()
+func jgobServer(achan chan []string, schan, rchan chan string) {
+	EnvLoad()
 
 	//log.SetLevel(log.DebugLevel)
 	//gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
@@ -102,7 +106,7 @@ func JgobServer(achan chan []string, schan, rchan chan string) {
 	global := &config.Global{
 		Config: config.GlobalConfig{
 			As:       jgobconfig.JgobConfig.As,
-			RouterId: jgobconfig.JgobConfig.RouterId,
+			RouterId: jgobconfig.JgobConfig.RouterID,
 			Port:     -1, // gobgp won't listen on tcp:179
 		},
 	}
@@ -379,15 +383,15 @@ func addFlowSpecPath(client api.GobgpApiClient, pathList []*table.Path) ([]byte,
 	return uuid, nil
 }
 
-func deleteFlowSpecPath(client api.GobgpApiClient, myUuid string) error {
-	byteUuid, err := uuid.FromString(myUuid)
+func deleteFlowSpecPath(client api.GobgpApiClient, myUUID string) error {
+	byteUUID, err := uuid.FromString(myUUID)
 	if err != nil {
 		log.Error("Something gone wrong with UUID converion into bytes: %s\n", err)
 	}
-	return deleteFlowSpecPathFromUuid(client, byteUuid.Bytes())
+	return deleteFlowSpecPathFromUUID(client, byteUUID.Bytes())
 }
 
-func deleteFlowSpecPathFromUuid(client api.GobgpApiClient, uuid []byte) error {
+func deleteFlowSpecPathFromUUID(client api.GobgpApiClient, uuid []byte) error {
 	var reqs []*api.DeletePathRequest
 	var vrfID = ""
 	resource := api.Resource_GLOBAL
@@ -412,14 +416,14 @@ func showGlobalConfig(client api.GobgpApiClient) (string, error) {
 		return "", err
 	}
 	as := `"as":"` + fmt.Sprint(conf.Config.As) + `",`
-	routerId := `"router-id":"` + fmt.Sprint(conf.Config.RouterId) + `",`
+	routerID := `"router-id":"` + fmt.Sprint(conf.Config.RouterId) + `",`
 	for i, addr := range conf.Config.LocalAddressList {
 		addl = addl + `"listen-addr-` + strconv.Itoa(i) + `":"` + addr + `"`
 		if i+1 < len(conf.Config.LocalAddressList) {
 			addl = addl + `, `
 		}
 	}
-	return fmt.Sprintf("[{%s %s \"lis-addr-list\":{%s}}]", as, routerId, addl), nil
+	return fmt.Sprintf("[{%s %s \"lis-addr-list\":{%s}}]", as, routerID, addl), nil
 
 }
 
@@ -587,11 +591,13 @@ func formatTimedelta(d int64) string {
 	hours := u % 24
 	days := u / 24
 
+	var s string
 	if days == 0 {
-		return fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
+		s = fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
 	} else {
-		return fmt.Sprintf("%dd ", days) + fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
+		s = fmt.Sprintf("%dd ", days) + fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
 	}
+	return s
 }
 
 func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
@@ -618,7 +624,7 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 		}
 		timedelta = append(timedelta, timeStr)
 	}
-	format_fsm := func(admin config.AdminState, fsm config.SessionState) string {
+	formatFsm := func(admin config.AdminState, fsm config.SessionState) string {
 		switch admin {
 		case config.ADMIN_STATE_DOWN:
 			return "Idle(Admin)"
@@ -640,7 +646,7 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 
 		peer := `"peer":"` + fmt.Sprint(neigh) + `"`
 		age := `"age":"` + fmt.Sprint(timedelta[i]) + `"`
-		state := `"state":"` + format_fsm(p.State.AdminState, p.State.SessionState) + `"`
+		state := `"state":"` + formatFsm(p.State.AdminState, p.State.SessionState) + `"`
 		as := `"as":"` + fmt.Sprint(p.State.PeerAs) + `"`
 		peertype := `"peer-type":"` + p.State.PeerType + `"`
 		advertised := `"advertised":"` + fmt.Sprint(p.State.AdjTable.Advertised) + `"`

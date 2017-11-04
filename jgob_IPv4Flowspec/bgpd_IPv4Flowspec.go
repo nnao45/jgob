@@ -1,7 +1,6 @@
 package main
 
 import (
-	//      "bufio"
 	"context"
 	"fmt"
 	"github.com/BurntSushi/toml"

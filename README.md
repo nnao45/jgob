@@ -1,3 +1,5 @@
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/nnao45/jgob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nnao45/jgob)](https://goreportcard.com/report/github.com/nnao45/jgob)
 # jgob
 Rest HTTPS API with json from [GoBGP](https://github.com/osrg/gobgp) using bgp4 IPv4 flowspec [RFC5575](https://tools.ietf.org/html/rfc5575) daemon.  
 

@@ -172,9 +172,11 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 			client := api.NewGobgpApiClient(conn)
 			if strings.Contains(c[0], "match") {
 				var uuu string
+				msg := "Success!!"
 				u, err1 := pushNewFlowSpecPath(client, c[0], "IPv4")
 				if err1 != nil {
 					log.Error(err1)
+					msg = fmt.Sprint(err1)
 				} else {
 					log.Info("Adding flowspec prefix is ", c[0])
 					uu, err2 := uuid.FromBytes(u)
@@ -188,6 +190,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				jsonMap := map[string]interface{}{
 					"remark": RemarkMap[uuu],
 					"uuid":   uuu,
+					"msg":	  msg,
 				}
 				j, err4 := json.Marshal(jsonMap)
 				if err4 != nil {

@@ -190,7 +190,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				jsonMap := map[string]interface{}{
 					"remark": RemarkMap[uuu],
 					"uuid":   uuu,
-					"msg":	  msg,
+					"msg":    msg,
 				}
 				j, err4 := json.Marshal(jsonMap)
 				if err4 != nil {

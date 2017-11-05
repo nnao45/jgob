@@ -44,7 +44,6 @@ func (p *Prefix) addAsPath(resAry []string) []string {
 	if p.Attrs.Aspath != "" {
 		s := "aspath " + p.Attrs.Aspath
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -53,7 +52,6 @@ func (p *Prefix) addProtocol(resAry []string) []string {
 	if p.Attrs.Protocol == "tcp" || p.Attrs.Protocol == "udp" || p.Attrs.Protocol == "icmp" {
 		s := "protocol " + p.Attrs.Protocol
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -62,7 +60,6 @@ func (p *Prefix) addSrcIP(resAry []string) []string {
 	if p.Attrs.Src != "" {
 		s := "source " + p.Attrs.Src
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -71,7 +68,6 @@ func (p *Prefix) addDstIP(resAry []string) []string {
 	if p.Attrs.Dst != "" {
 		s := "destination " + p.Attrs.Dst
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -80,7 +76,6 @@ func (p *Prefix) addSrcPort(resAry []string) []string {
 	if p.Attrs.SrcPort != "" {
 		s := "source-port" + p.Attrs.SrcPort
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -89,7 +84,6 @@ func (p *Prefix) addDstPort(resAry []string) []string {
 	if p.Attrs.DstPort != "" {
 		s := "destination-port" + p.Attrs.DstPort
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -106,7 +100,6 @@ func (p *Prefix) addOrigin(resAry []string) []string {
 	if p.Attrs.Origin == "igp" || p.Attrs.Origin == "egp" || p.Attrs.Origin == "incomplete" {
 		s := "origin " + p.Attrs.Origin
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -115,7 +108,6 @@ func (p *Prefix) addCommunities(resAry []string) []string {
 	if p.Attrs.Communities != "" {
 		s := "community " + p.Attrs.Communities
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }
@@ -124,15 +116,12 @@ func (p *Prefix) addExtcomms(resAry []string) []string {
 	if p.Attrs.Extcomms == "" {
 		s := "then accept"
 		resAry = append(resAry, s)
-		return resAry
 	} else if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
 		s := "then " + p.Attrs.Extcomms
 		resAry = append(resAry, s)
-		return resAry
 	} else if p.Attrs.Extcomms != "" {
 		s := "then rate-limit " + p.Attrs.Extcomms
 		resAry = append(resAry, s)
-		return resAry
 	}
 	return resAry
 }

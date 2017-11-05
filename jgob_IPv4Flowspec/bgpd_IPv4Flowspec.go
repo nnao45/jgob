@@ -185,7 +185,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						RemarkMap[uuu] = c[1]
 					}
 				}
-				jsonMap := &map[string]interface{}{
+				jsonMap := map[string]interface{}{
 						"remark": RemarkMap[uuu],
 						"uuid": uuu,
 					}
@@ -198,7 +198,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				err5 := deleteFlowSpecPath(client, c[0])
 				if err5 != nil {
 					log.Error(err5)
-					jsonMap := &map[string]interface{}{
+					jsonMap := map[string]interface{}{
 						"msg": err5,
 					}
 					j, err6 := json.Marshal(jsonMap)
@@ -209,7 +209,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				} else {
 					log.Info("Deleting flowspec uuid , ", c[0])
 					if _, ok := RemarkMap[c[0]]; ok {
-						jsonMap := &map[string]interface{}{
+						jsonMap := map[string]interface{}{
 							"remark": RemarkMap[c[0]],
 							"uuid": c[0],
 							"msg": "Success!!",
@@ -221,7 +221,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						rchan <- string(j)
 						delete(RemarkMap, c[0])
 					} else {
-						jsonMap := &map[string]interface{}{
+						jsonMap := map[string]interface{}{
                                                         "remark": RemarkMap[c[0]],
                                                         "uuid": "remark not found",
                                                         "msg": "Success!!",
@@ -445,7 +445,7 @@ func showGlobalConfig(client api.GobgpApiClient) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	jsonMap := &map[string]interface{}{
+	jsonMap := map[string]interface{}{
 		"as":conf.Config.As,
 		"router-id":conf.Config.RouterId,
 		"listen-addr-list":conf.Config.LocalAddressList,
@@ -673,7 +673,7 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 			neigh = p.State.NeighborInterface
 		}
 
-		jsonMap := &map[string]interface{}{
+		jsonMap := map[string]interface{}{
 			"peer":neigh,
 			"age":timedelta[i],
 			"state":formatFsm(p.State.AdminState, p.State.SessionState),

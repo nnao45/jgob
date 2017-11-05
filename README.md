@@ -224,9 +224,11 @@ GET "/route"
 POST new routes to "/add" (multipath is ok, adding in array :innocent:)  
 Don't need to "age" value, "uuid" value.
 ![result](https://github.com/nnao45/naoGifRepo/blob/master/addroute.jpg)  
-Done, And received "uuid"(adding route's universally unique id), and "remark"(adding route's remark, free string)  
-This is Used Deleting & Rib Management.
-![result](https://github.com/nnao45/naoGifRepo/blob/master/responsenwroute.jpg)  
+Done, And received "uuid"(adding route's universally unique id), "remark"(adding route's remark, free string)  
+and system messages.
+![result](https://github.com/nnao45/naoGifRepo/blob/master/addrouteresult.jpg)  
+(if server internal faild, system messsages will be values in direct error messages)
+
 ### Delete Bgp route
 If you want to route delete, it's very easy.(also, multipath is ok, adding in array :innocent:)  
 POST "/del" a route having uuid(if you will want to check uuid, GET "/route").  

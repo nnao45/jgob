@@ -137,7 +137,7 @@ func (p *Prefix) addExtcomms(resAry []string) []string {
 	return resAry
 }
 
-func (p *Prefix) addPrefixFunc(resAry []string)[]string{
+func (p *Prefix) addPrefixFunc(resAry []string) []string {
 	resAry = p.addAsPath(resAry)
 	resAry = p.addProtocol(resAry)
 	resAry = p.addSrcIP(resAry)

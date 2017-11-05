@@ -19,9 +19,9 @@ import (
 	"net/url"
 	"os"
 	//"strconv"
+	"encoding/json"
 	"strings"
 	"time"
-	"encoding/json"
 )
 
 // RemarkMap is route's remarking with uuid
@@ -186,12 +186,12 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					}
 				}
 				jsonMap := map[string]interface{}{
-						"remark": RemarkMap[uuu],
-						"uuid": uuu,
-					}
+					"remark": RemarkMap[uuu],
+					"uuid":   uuu,
+				}
 				j, err4 := json.Marshal(jsonMap)
 				if err4 != nil {
-				        log.Error(err4)
+					log.Error(err4)
 				}
 				rchan <- string(j)
 			} else {
@@ -203,7 +203,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					}
 					j, err6 := json.Marshal(jsonMap)
 					if err6 != nil {
-					       log.Error(err6)
+						log.Error(err6)
 					}
 					rchan <- string(j)
 				} else {
@@ -211,8 +211,8 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					if _, ok := RemarkMap[c[0]]; ok {
 						jsonMap := map[string]interface{}{
 							"remark": RemarkMap[c[0]],
-							"uuid": c[0],
-							"msg": "Success!!",
+							"uuid":   c[0],
+							"msg":    "Success!!",
 						}
 						j, err7 := json.Marshal(jsonMap)
 						if err7 != nil {
@@ -222,15 +222,15 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 						delete(RemarkMap, c[0])
 					} else {
 						jsonMap := map[string]interface{}{
-                                                        "remark": RemarkMap[c[0]],
-                                                        "uuid": "remark not found",
-                                                        "msg": "Success!!",
-                                                }
+							"remark": RemarkMap[c[0]],
+							"uuid":   "remark not found",
+							"msg":    "Success!!",
+						}
 						j, err8 := json.Marshal(jsonMap)
-                                                if err8 != nil {
-                                                        log.Error(err8)
-                                                }
-                                                rchan <- string(j)
+						if err8 != nil {
+							log.Error(err8)
+						}
+						rchan <- string(j)
 					}
 				}
 			}
@@ -446,14 +446,14 @@ func showGlobalConfig(client api.GobgpApiClient) (string, error) {
 		return "", err
 	}
 	jsonMap := map[string]interface{}{
-		"as":conf.Config.As,
-		"router-id":conf.Config.RouterId,
-		"listen-addr-list":conf.Config.LocalAddressList,
+		"as":               conf.Config.As,
+		"router-id":        conf.Config.RouterId,
+		"listen-addr-list": conf.Config.LocalAddressList,
 	}
 	json, err := json.Marshal(jsonMap)
-        if err != nil {
+	if err != nil {
 		return "", err
-        }
+	}
 	return string(json), nil
 }
 
@@ -674,16 +674,16 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 		}
 
 		jsonMap := map[string]interface{}{
-			"peer":neigh,
-			"age":timedelta[i],
-			"state":formatFsm(p.State.AdminState, p.State.SessionState),
-			"attrs":map[string]interface{}{
-				"as":p.State.PeerAs,
-				"peer-type":p.State.PeerType,
-				"routes":map[string]interface{}{
-					"advertised":p.State.AdjTable.Advertised,
-					"received":p.State.AdjTable.Received,
-					"accepted":p.State.AdjTable.Accepted,
+			"peer":  neigh,
+			"age":   timedelta[i],
+			"state": formatFsm(p.State.AdminState, p.State.SessionState),
+			"attrs": map[string]interface{}{
+				"as":        p.State.PeerAs,
+				"peer-type": p.State.PeerType,
+				"routes": map[string]interface{}{
+					"advertised": p.State.AdjTable.Advertised,
+					"received":   p.State.AdjTable.Received,
+					"accepted":   p.State.AdjTable.Accepted,
 				},
 			},
 		}

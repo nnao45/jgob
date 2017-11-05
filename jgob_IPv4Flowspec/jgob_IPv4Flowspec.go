@@ -40,6 +40,124 @@ type Prefix struct {
 	}
 }
 
+func (p *Prefix) addAsPath(resAry []string) []string {
+	if p.Attrs.Aspath != "" {
+		s := "aspath " + p.Attrs.Aspath
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addProtocol(resAry []string) []string {
+	if p.Attrs.Protocol == "tcp" || p.Attrs.Protocol == "udp" || p.Attrs.Protocol == "icmp" {
+		s := "protocol " + p.Attrs.Protocol
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addSrcIP(resAry []string) []string {
+	if p.Attrs.Src != "" {
+		s := "source " + p.Attrs.Src
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addDstIP(resAry []string) []string {
+	if p.Attrs.Dst != "" {
+		s := "destination " + p.Attrs.Dst
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addSrcPort(resAry []string) []string {
+	if p.Attrs.SrcPort != "" {
+		s := "source-port" + p.Attrs.SrcPort
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addDstPort(resAry []string) []string {
+	if p.Attrs.DstPort != "" {
+		s := "destination-port" + p.Attrs.DstPort
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addOrigin(resAry []string) []string {
+	if p.Attrs.Origin == " i" {
+		p.Attrs.Origin = "igp"
+	} else if p.Attrs.Origin == " e" {
+		p.Attrs.Origin = "egp"
+	} else if p.Attrs.Origin == " ?" {
+		p.Attrs.Origin = "incomplete"
+	}
+
+	if p.Attrs.Origin == "igp" || p.Attrs.Origin == "egp" || p.Attrs.Origin == "incomplete" {
+		s := "origin " + p.Attrs.Origin
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addCommunities(resAry []string) []string {
+	if p.Attrs.Communities != "" {
+		s := "community " + p.Attrs.Communities
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addExtcomms(resAry []string) []string {
+	if p.Attrs.Extcomms == "" {
+		s := "then accept"
+		resAry = append(resAry, s)
+		return resAry
+	} else if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
+		s := "then " + p.Attrs.Extcomms
+		resAry = append(resAry, s)
+		return resAry
+	} else if p.Attrs.Extcomms != "" {
+		s := "then rate-limit " + p.Attrs.Extcomms
+		resAry = append(resAry, s)
+		return resAry
+	}
+	return resAry
+}
+
+func (p *Prefix) addPrefixFunc(resAry []string)[]string{
+	resAry = p.addAsPath(resAry)
+	resAry = p.addProtocol(resAry)
+	resAry = p.addSrcIP(resAry)
+	resAry = p.addDstIP(resAry)
+	resAry = p.addSrcPort(resAry)
+	resAry = p.addDstPort(resAry)
+	resAry = p.addOrigin(resAry)
+	resAry = p.addCommunities(resAry)
+	resAry = p.addExtcomms(resAry)
+	return resAry
+}
+
+func (p *Prefix) addUUID(res string) string {
+	if p.UUID != "" {
+		res = p.UUID
+		return res
+	}
+	return res
+}
+
 func addog(text string, filename string) {
 	var writer *bufio.Writer
 	data := []byte(text)
@@ -131,7 +249,7 @@ func main() {
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
-			json,err := json.Marshal(RemarkMap)
+			json, err := json.Marshal(RemarkMap)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -240,65 +358,7 @@ func main() {
 
 			for _, p := range prefixies {
 				resAry := make([]string, 0, 20)
-
-				if p.Attrs.Aspath != "" {
-					s := "aspath " + p.Attrs.Aspath
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Protocol == "tcp" || p.Attrs.Protocol == "udp" || p.Attrs.Protocol == "icmp" {
-					s := "protocol " + p.Attrs.Protocol
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Src != "" {
-					s := "source " + p.Attrs.Src
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Dst != "" {
-					s := "destination " + p.Attrs.Dst
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.SrcPort != "" {
-					s := "source-port" + p.Attrs.SrcPort
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.DstPort != "" {
-					s := "destination-port" + p.Attrs.DstPort
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Origin == " i" {
-					p.Attrs.Origin = "igp"
-				} else if p.Attrs.Origin == " e" {
-					p.Attrs.Origin = "egp"
-				} else if p.Attrs.Origin == " ?" {
-					p.Attrs.Origin = "incomplete"
-				}
-
-				if p.Attrs.Origin == "igp" || p.Attrs.Origin == "egp" || p.Attrs.Origin == "incomplete" {
-					s := "origin " + p.Attrs.Origin
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Communities != "" {
-					s := "community " + p.Attrs.Communities
-					resAry = append(resAry, s)
-				}
-
-				if p.Attrs.Extcomms == "" {
-					s := "then accept"
-					resAry = append(resAry, s)
-				} else if p.Attrs.Extcomms == "accept" || p.Attrs.Extcomms == "discard" {
-					s := "then " + p.Attrs.Extcomms
-					resAry = append(resAry, s)
-				} else if p.Attrs.Extcomms != "" {
-					s := "then rate-limit " + p.Attrs.Extcomms
-					resAry = append(resAry, s)
-				}
+				resAry = p.addPrefixFunc(resAry)
 				achan <- []string{fmt.Sprint("match " + strings.Join(resAry, " ")), p.Remark}
 				reqAry = append(reqAry, <-rchan)
 				time.Sleep(500 * time.Millisecond)
@@ -361,9 +421,7 @@ func main() {
 			reqAry := make([]string, 0, 50)
 
 			for _, p := range prefixies {
-				if p.UUID != "" {
-					res = p.UUID
-				}
+				res = p.addUUID(res)
 				achan <- []string{res, ""}
 				reqAry = append(reqAry, <-rchan)
 				time.Sleep(500 * time.Millisecond)

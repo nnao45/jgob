@@ -251,6 +251,24 @@ func main() {
 		}
 	})
 
+	rtr.HandleFunc("/remark", func(w http.ResponseWriter, r *http.Request) {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+		} else {
+			RemarkMap["state"] = true
+			json, err := json.Marshal(RemarkMap)
+			if err != nil {
+				logrus.Error(err)
+			}
+			str := fmt.Sprintf("[%s]", string(json))
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
+		}
+	})
+
 	rtr.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)

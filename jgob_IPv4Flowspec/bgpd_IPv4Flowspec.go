@@ -637,7 +637,7 @@ func formatTimedelta(d int64) string {
 
 	var s string
 	if days == 0 {
-		s = fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
+		s = fmt.Sprintf("0d %02d:%02d:%02d", hours, mins, secs)
 	} else {
 		s = fmt.Sprintf("%dd ", days) + fmt.Sprintf("%02d:%02d:%02d", hours, mins, secs)
 	}

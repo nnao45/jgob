@@ -27,7 +27,7 @@ type Prefix struct {
 	Remark string `json:"remark"`
 	UUID   string `json:"uuid"`
 	Age    string `json:"age"`
-	State  bool   `json:"state"`
+	Flag   bool   `json:"flag"`
 	Attrs  struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`
@@ -190,10 +190,10 @@ const (
 	ROUTE_FILE = "jgob.route"
 	//DEFAULT_TIMEOUT is Between the API communication
 	DEFAULT_TIMEOUT = 2000
-	//STATE_FALSE_ROW is false state row string
-	STATE_FALSE_ROW = `[{"state":false}]`
-	//STATE_FALSE_ROW_ONE is false state row string
-	STATE_FALSE_ROW_ONE = `{"state":false}`
+	//FLAG_FALSE_ROW is false flag row string
+	FLAG_FALSE_ROW = `[{"flag":false}]`
+	//FLAG_FALSE_ROW_ONE is false flag row string
+	FLAG_FALSE_ROW_ONE = `{"flag":false}`
 )
 
 func init() {
@@ -245,7 +245,7 @@ func main() {
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
-			RemarkMap["state"] = true
+			RemarkMap["flag"] = true
 			json, err := json.Marshal(RemarkMap)
 			if err != nil {
 				logrus.Error(err)
@@ -272,7 +272,7 @@ func main() {
 				case str = <-rchan:
 					break
 				case <-timer.C:
-					str = STATE_FALSE_ROW
+					str = FLAG_FALSE_ROW
 					break
 				}
 				break
@@ -298,7 +298,7 @@ func main() {
 				case str = <-rchan:
 					break
 				case <-timer.C:
-					str = STATE_FALSE_ROW
+					str = FLAG_FALSE_ROW
 					break
 				}
 				break
@@ -324,7 +324,7 @@ func main() {
 				case str = <-rchan:
 					break
 				case <-timer.C:
-					str = STATE_FALSE_ROW
+					str = FLAG_FALSE_ROW
 					break
 				}
 				break
@@ -404,7 +404,7 @@ func main() {
 					case str = <-rchan:
 						break
 					case <-timer.C:
-						str = STATE_FALSE_ROW_ONE
+						str = FLAG_FALSE_ROW_ONE
 						break
 					}
 					break
@@ -483,7 +483,7 @@ func main() {
 					case str = <-rchan:
 						break
 					case <-timer.C:
-						str = STATE_FALSE_ROW_ONE
+						str = FLAG_FALSE_ROW_ONE
 						break
 					}
 					break

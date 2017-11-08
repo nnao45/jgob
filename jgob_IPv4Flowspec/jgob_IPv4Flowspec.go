@@ -188,6 +188,12 @@ const (
 	CONFIG_FILE = "config.tml"
 	//ROUTE_FILE is rib in file format
 	ROUTE_FILE = "jgob.route"
+	//DEFAULT_TIMEOUT is Between the API communication
+	DEFAULT_TIMEOUT = 2000
+	//STATE_FALSE_ROW is false state row string
+	STATE_FALSE_ROW = `[{"state":false}]`
+	//STATE_FALSE_ROW_ONE is false state row string
+	STATE_FALSE_ROW_ONE = `{"state":false}`
 )
 
 func init() {
@@ -251,24 +257,6 @@ func main() {
 		}
 	})
 
-	rtr.HandleFunc("/remark", func(w http.ResponseWriter, r *http.Request) {
-		if checkAuth(r) == false {
-			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
-			w.WriteHeader(401)
-			w.Write([]byte("401 Unauthorized\n"))
-		} else {
-			RemarkMap["state"] = true
-			json, err := json.Marshal(RemarkMap)
-			if err != nil {
-				logrus.Error(err)
-			}
-			str := fmt.Sprintf("[%s]", string(json))
-			w.Header().Set("Content-Type", "application/json")
-			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
-			w.Write([]byte(str))
-		}
-	})
-
 	rtr.HandleFunc("/route", func(w http.ResponseWriter, r *http.Request) {
 		if checkAuth(r) == false {
 			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
@@ -276,7 +264,19 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
 			schan <- "route"
-			str := <-rchan
+			timer := time.NewTimer(DEFAULT_TIMEOUT * time.Millisecond)
+			var str string
+			for {
+				timer.Reset(DEFAULT_TIMEOUT * time.Millisecond)
+				select {
+				case str = <-rchan:
+					break
+				case <-timer.C:
+					str = STATE_FALSE_ROW
+					break
+				}
+				break
+			}
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
@@ -290,7 +290,19 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
 			schan <- "global"
-			str := <-rchan
+			timer := time.NewTimer(DEFAULT_TIMEOUT * time.Millisecond)
+			var str string
+			for {
+				timer.Reset(DEFAULT_TIMEOUT * time.Millisecond)
+				select {
+				case str = <-rchan:
+					break
+				case <-timer.C:
+					str = STATE_FALSE_ROW
+					break
+				}
+				break
+			}
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
@@ -304,7 +316,19 @@ func main() {
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
 			schan <- "nei"
-			str := <-rchan
+			timer := time.NewTimer(DEFAULT_TIMEOUT * time.Millisecond)
+			var str string
+			for {
+				timer.Reset(DEFAULT_TIMEOUT * time.Millisecond)
+				select {
+				case str = <-rchan:
+					break
+				case <-timer.C:
+					str = STATE_FALSE_ROW
+					break
+				}
+				break
+			}
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
 			w.Write([]byte(str))
@@ -344,6 +368,7 @@ func main() {
 			length, err := strconv.Atoi(r.Header.Get("Content-Length"))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -352,6 +377,7 @@ func main() {
 			length, err = r.Body.Read(body)
 			if err != nil && err != io.EOF {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -360,6 +386,7 @@ func main() {
 			err = json.Unmarshal(body[:length], &prefixies)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -369,7 +396,20 @@ func main() {
 				resAry := make([]string, 0, 20)
 				resAry = p.addPrefixFunc(resAry)
 				achan <- []string{fmt.Sprint("match " + strings.Join(resAry, " ")), p.Remark}
-				reqAry = append(reqAry, <-rchan)
+				timer := time.NewTimer(DEFAULT_TIMEOUT * time.Millisecond)
+				var str string
+				for {
+					timer.Reset(DEFAULT_TIMEOUT * time.Millisecond)
+					select {
+					case str = <-rchan:
+						break
+					case <-timer.C:
+						str = STATE_FALSE_ROW_ONE
+						break
+					}
+					break
+				}
+				reqAry = append(reqAry, str)
 				time.Sleep(500 * time.Millisecond)
 			}
 			var reql string
@@ -407,6 +447,7 @@ func main() {
 			length, err := strconv.Atoi(r.Header.Get("Content-Length"))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -415,6 +456,7 @@ func main() {
 			length, err = r.Body.Read(body)
 			if err != nil && err != io.EOF {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -423,6 +465,7 @@ func main() {
 			err = json.Unmarshal(body[:length], &prefixies)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
+				logrus.Error(err)
 				return
 			}
 
@@ -432,7 +475,20 @@ func main() {
 			for _, p := range prefixies {
 				res = p.addUUID(res)
 				achan <- []string{res, ""}
-				reqAry = append(reqAry, <-rchan)
+				timer := time.NewTimer(DEFAULT_TIMEOUT * time.Millisecond)
+				var str string
+				for {
+					timer.Reset(DEFAULT_TIMEOUT * time.Millisecond)
+					select {
+					case str = <-rchan:
+						break
+					case <-timer.C:
+						str = STATE_FALSE_ROW_ONE
+						break
+					}
+					break
+				}
+				reqAry = append(reqAry, str)
 				time.Sleep(500 * time.Millisecond)
 			}
 			var reql string

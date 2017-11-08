@@ -173,10 +173,12 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 			if strings.Contains(c[0], "match") {
 				var uuu string
 				msg := "Success!!"
+				state := true
 				u, err1 := pushNewFlowSpecPath(client, c[0], "IPv4")
 				if err1 != nil {
 					log.Error(err1)
 					msg = fmt.Sprint(err1)
+					state = false
 				} else {
 					log.Info("Adding flowspec prefix is ", c[0])
 					uu, err2 := uuid.FromBytes(u)
@@ -191,6 +193,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					"remark": RemarkMap[uuu],
 					"uuid":   uuu,
 					"msg":    msg,
+					"state":  state,
 				}
 				j, err4 := json.Marshal(jsonMap)
 				if err4 != nil {
@@ -198,11 +201,14 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				}
 				rchan <- string(j)
 			} else {
+				state := true
 				err5 := deleteFlowSpecPath(client, c[0])
 				if err5 != nil {
 					log.Error(err5)
+					state = false
 					jsonMap := map[string]interface{}{
-						"msg": err5,
+						"msg":   err5,
+						"state": state,
 					}
 					j, err6 := json.Marshal(jsonMap)
 					if err6 != nil {
@@ -216,6 +222,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 							"remark": RemarkMap[c[0]],
 							"uuid":   c[0],
 							"msg":    "Success!!",
+							"state":  state,
 						}
 						j, err7 := json.Marshal(jsonMap)
 						if err7 != nil {
@@ -228,6 +235,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 							"remark": RemarkMap[c[0]],
 							"uuid":   "remark not found",
 							"msg":    "Success!!",
+							"state":  state,
 						}
 						j, err8 := json.Marshal(jsonMap)
 						if err8 != nil {
@@ -446,16 +454,17 @@ func deleteFlowSpecPathFromUUID(client api.GobgpApiClient, uuid []byte) error {
 func showGlobalConfig(client api.GobgpApiClient) (string, error) {
 	conf, err := showGlobalConfigRow(client)
 	if err != nil {
-		return "", err
+		return `{"state":false}`, err
 	}
 	jsonMap := map[string]interface{}{
 		"as":               conf.Config.As,
 		"router-id":        conf.Config.RouterId,
 		"listen-addr-list": conf.Config.LocalAddressList,
+		"state":            true,
 	}
 	json, err := json.Marshal(jsonMap)
 	if err != nil {
-		return "", err
+		return `{"state":false}`, err
 	}
 	return string(json), nil
 }
@@ -491,11 +500,11 @@ func showFlowSpecRib(client api.GobgpApiClient, isWriteRib bool) (string, error)
 		},
 	})
 	if err != nil {
-		return "", err
+		return `{"state":false}`, err
 	}
 	myNativeTable, err = res.Table.ToNativeTable()
 	if err != nil {
-		return "", err
+		return `{"state":false}`, err
 	}
 
 	wc := len(myNativeTable.GetSortedDestinations())
@@ -599,10 +608,12 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 		}
 		remark = `"remark":"` + remark + `",`
 
+		state := `"state":true,`
+
 		// fill up the tree with items
 		var str string
 		if !isWriteRib {
-			str = fmt.Sprintf("{%s %s %s \"attrs\":{%s %s %s}}", remark, uuid, age, nlriStr, attrStr, apStr)
+			str = fmt.Sprintf("{%s %s %s %s \"attrs\":{%s %s %s}}", remark, uuid, age, state, nlriStr, attrStr, apStr)
 		} else {
 			str = fmt.Sprintf("{%s \"attrs\":{%s %s %s}}", remark, nlriStr, attrStr, apStr)
 		}

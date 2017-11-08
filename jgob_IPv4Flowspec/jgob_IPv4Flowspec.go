@@ -27,6 +27,7 @@ type Prefix struct {
 	Remark string `json:"remark"`
 	UUID   string `json:"uuid"`
 	Age    string `json:"age"`
+	State  bool   `json:"state"`
 	Attrs  struct {
 		Aspath      string `json:"aspath"`
 		Protocol    string `json:"protocol"`

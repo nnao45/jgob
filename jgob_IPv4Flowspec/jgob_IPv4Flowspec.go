@@ -239,6 +239,7 @@ func main() {
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
+			RemarkMap["state"] = true
 			json, err := json.Marshal(RemarkMap)
 			if err != nil {
 				logrus.Error(err)

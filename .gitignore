@@ -1,6 +1,9 @@
 test/*
-jgob_IPv4Flowspec/jgob_IPv4Flowspec
-jgob_IPv4Flowspec/.env
-jgob_IPv4Flowspec/ssl/
-jgob_IPv4Flowspec/access_log
-jgob_IPv4Flowspec/config.tml
+jgob/jgob_IPv4Flowspec
+jgob/.env
+jgob/ssl/
+jgob/access_log
+jgob/config.tml
+exclamation/exclamation.go
+exclamation/exclamation
+exclamation/ssl/

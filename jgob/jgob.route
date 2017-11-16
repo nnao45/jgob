@@ -1,0 +1,1 @@
+[{"remark":"test", "attrs":{"source-port":" >=1025&<=65535",  "origin":" i", "aspath":""}},{"remark":"test", "attrs":{"source-port":" ==10",  "origin":" i", "aspath":""}},{"remark":"test", "attrs":{"source-port":" ==20",  "origin":" i", "aspath":""}},{"remark":"test", "attrs":{"source-port":" ==30",  "origin":" i", "aspath":""}}]

@@ -1,5 +1,6 @@
 test/*
-jgob/jgob_IPv4Flowspec
+jgob/jgob
+jgob/jgob.exe
 jgob/.env
 jgob/ssl/
 jgob/access_log

@@ -4,6 +4,5 @@ jgob/.env
 jgob/ssl/
 jgob/access_log
 jgob/config.tml
-exclamation/exclamation.go
 exclamation/exclamation
 exclamation/ssl/

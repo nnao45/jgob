@@ -60,6 +60,20 @@ func main() {
 		}
 	})
 
+	rtr.HandleFunc("/recover", func(w http.ResponseWriter, r *http.Request) {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="EXCLA REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+		} else {
+			sh.Command("iptables", "-D", "INPUT", "1").Run()
+			str := "ReAccept BGP Commection\n"
+			w.Header().Set("Content-Type", "text/plain")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
+		}
+	})
+
 	w := l.Writer()
 	defer w.Close()
 	accessFile, err := os.OpenFile("access_log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)

@@ -24,4 +24,4 @@ before_script:
           - exclamation/makeSSL.sh
 sudo: required
 
-script: cd jgob && go build && exit && cd exclamation && go build 
+script: cd jgob && go build && cd ../ && cd exclamation && go build 

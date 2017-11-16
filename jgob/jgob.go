@@ -148,29 +148,6 @@ func (p *Prefix) addUUID(res string) string {
 	return res
 }
 
-func addog(text string, filename string) {
-	var writer *bufio.Writer
-	data := []byte(text)
-
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
-	writer = bufio.NewWriter(f)
-	writer.Write(data)
-	writer.Flush()
-	if err != nil {
-		log.Fatal("Error loading " + filename + " file")
-	}
-	defer f.Close()
-}
-
-// EnvLoad is dotenv func
-func EnvLoad() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-
-	}
-}
-
 var configFile = flag.String("f", CONFIG_FILE, "")
 var routeFile = flag.String("r", ROUTE_FILE, "")
 var usage = `
@@ -522,6 +499,29 @@ func main() {
 		Handler:  httpLogger.WriteLog(http.DefaultServeMux, accessFile),
 	}
 	l.Fatal(srv.ListenAndServeTLS("ssl/development/myself.crt", "ssl/development/myself.key"))
+}
+
+func addog(text string, filename string) {
+	var writer *bufio.Writer
+	data := []byte(text)
+
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0600)
+	writer = bufio.NewWriter(f)
+	writer.Write(data)
+	writer.Flush()
+	if err != nil {
+		log.Fatal("Error loading " + filename + " file")
+	}
+	defer f.Close()
+}
+
+// EnvLoad is dotenv func
+func EnvLoad() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+
+	}
 }
 
 func checkAuth(r *http.Request) bool {

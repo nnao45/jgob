@@ -20,6 +20,7 @@ before_script:
           - go get "github.com/gorilla/mux"
           - go get "github.com/joho/godotenv"
           - go get "github.com/ajays20078/go-http-logger"
+          - go get "github.com/codeskyblue/go-sh"
           - jgob/makeSSL.sh
           - exclamation/makeSSL.sh
 sudo: required

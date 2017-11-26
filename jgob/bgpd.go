@@ -163,13 +163,13 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 		log.Fatal(rpcErr)
 		return
 	}
+	client := api.NewGobgpApiClient(conn)
 
 	var count int
 	RemarkMap = map[string]interface{}{}
 	for {
 		select {
 		case c := <-achan:
-			client := api.NewGobgpApiClient(conn)
 			if strings.Contains(c[0], "match") {
 				var uuu string
 				msg := "Success!!"
@@ -245,25 +245,23 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 					}
 				}
 			}
-			writeFilefromRib(client)
+			//writeFilefromRib(client)
+			setKeyFromRib(client)
 		case req := <-schan:
 			switch req {
 			case "route":
-				client := api.NewGobgpApiClient(conn)
 				rib, err := showFlowSpecRib(client, false)
 				if err != nil {
 					log.Error(err)
 				}
 				rchan <- rib
 			case "nei":
-				client := api.NewGobgpApiClient(conn)
 				nei, err := showBgpNeighbor(client)
 				if err != nil {
 					log.Error(err)
 				}
 				rchan <- nei
 			case "global":
-				client := api.NewGobgpApiClient(conn)
 				conf, err := showGlobalConfig(client)
 				if err != nil {
 					log.Error(err)
@@ -280,9 +278,9 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				go func() {
 					<-auto
 					for {
-						client := api.NewGobgpApiClient(conn)
-						writeFilefromRib(client)
-						time.Sleep(1000 * time.Millisecond)
+						//writeFilefromRib(client)
+						setKeyFromRib(client)
+						time.Sleep(24 * time.Hour)
 					}
 				}()
 			}
@@ -298,6 +296,19 @@ func writeFilefromRib(client api.GobgpApiClient) {
 	dog(rib, *routeFile)
 }
 
+func setKeyFromRib(client) {
+	json, e := showFlowSpecRib(client, true)
+        if e != nil {
+                log.Error(e)
+        }
+	result, err := setPrefixToRedis(rclient, json)
+	log.Info("Redis info: ", result)
+	if err != nil {
+		log.Error("Redis error: ", err)
+	}
+}
+
+
 func reloadingRib(lock chan struct{}) {
 	<-lock
 	log.Info("Starting Check the HTTP API...")
@@ -307,8 +318,8 @@ func reloadingRib(lock chan struct{}) {
 			log.Fatal("oh,sorry, unable to access http api...")
 			os.Exit(1)
 		}
-		if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) {
-			log.Info("OK, Access the HTTP API.")
+		if curlCheck(os.Getenv("USERNAME"), os.Getenv("PASSWORD")) && redisPing(rclient){
+			log.Info("OK, Access Redis & the HTTP API.")
 			break
 		} else {
 			time.Sleep(500 * time.Millisecond)
@@ -318,7 +329,12 @@ func reloadingRib(lock chan struct{}) {
 
 	log.Info("Starting installing the routing table...")
 	values := url.Values{}
-	err := curlPost(values, cat(*routeFile), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+	result, err := getRecentPrefixFromRedis(rclient *redis.Client)
+	if err != nil {
+		log.Error("Redis error: ", err)
+	}
+	//err := curlPost(values, cat(*routeFile), os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
+	err = curlPost(values, result, os.Getenv("USERNAME"), os.Getenv("PASSWORD"))
 	if err != nil {
 		log.Error("Unable to loading route's json")
 	}

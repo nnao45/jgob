@@ -1,7 +1,4 @@
 language: go
-        - 1.5
-        - 1.6
-        - 1.7
         - 1.8
         - 1.9
         - master
@@ -22,6 +19,7 @@ before_script:
           - go get "github.com/ajays20078/go-http-logger"
           - go get "github.com/codeskyblue/go-sh"
           - jgob/makeSSL.sh
+          - jgob/makeTestConfig.sh
           - exclamation/makeSSL.sh
 sudo: required
 

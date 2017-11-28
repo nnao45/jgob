@@ -1,3 +1,6 @@
+//this is used by routing table when management with redis
+
+/*
 package main
 
 import "fmt"
@@ -43,3 +46,4 @@ func getRecentPrefixFromRedis(rclient *redis.Client) (result string, err error){
 	result, err := client.Get(recentTimeKey).Result()
 	return
 }
+*/

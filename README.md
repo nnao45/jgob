@@ -176,6 +176,7 @@ type Prefix struct {
         Remark  string `json:"remark"`  //remarking this route, it's filed you take it easy to write. 
         Uuid    string `json:"uuid"`    //this route's universally unique id.
         Age     string `json:"age"`     //this route's aging time.
+        Flag    bool   `json:"flag"`    //this is internal server error flag.
         Attrs struct {
                 Aspath      string `json:"aspath"`              //this route flowspec attribute's as path.
                 Protocol    string `json:"protocol"`            //this route flowspec attribute's protobcol.

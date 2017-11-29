@@ -28,6 +28,29 @@ $ git clone https://github.com/nnao45/jgob
 $ cd jgob
 $ go build
 ```
+make config file.
+(can use following script make template. please change following info into your environments.)
+```bash
+& cat makeTestConfig.sh
+
+#!/bin/sh
+
+cat << EOT > config.tml
+[jgobconfig]
+as = 65501
+router-id = "10.0.0.1"
+[[jgobconfig.neighbor-config]]
+peer-as = 65501
+neighbor-address = "10.0.0.2"
+peer-type = "internal"
+EOT
+
+cat << EOT > .env
+USERNAME=user
+PASSWORD=pass
+EOT
+```
+
 jgob use SSL, so you must make certification object.
 If you don't have, use `makeSSL.sh`.
 ```bash

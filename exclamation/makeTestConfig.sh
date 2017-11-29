@@ -1,3 +1,4 @@
+cat << EOT > .env
 USERNAME=user
 PASSWORD=pass
-SECRET=secret
+EOT

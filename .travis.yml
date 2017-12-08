@@ -3,6 +3,9 @@ go:
           - 1.8
           - 1.9
           - master
+os:
+          - linux
+          - osx
 before_script:
           - go get "github.com/BurntSushi/toml"
           - go get "github.com/osrg/gobgp/api"

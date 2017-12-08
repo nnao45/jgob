@@ -98,6 +98,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 
 	// loading config file
 	var jgobconfig TmlConfig
+	//_, err := toml.DecodeFile(*configFile, &jgobconfig)
 	_, err := toml.DecodeFile(*configFile, &jgobconfig)
 	if err != nil {
 		log.Fatal(err)

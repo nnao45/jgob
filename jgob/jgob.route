@@ -1,1 +1,1 @@
-[]
+[{"remark":"test", "attrs":{"destination":"10.10.11.0/24", "source":"10.10.10.0/24", "protocol":"tcp", "destination-port":" ==80", "source-port":" ==3333",  "origin":" e","communities":"no-export","extcomms":"2000.000000", "aspath":""}}]

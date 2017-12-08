@@ -36,7 +36,7 @@ type Prefix struct {
 		SrcPort     string `json:"source-port"`
 		DstPort     string `json:"destination-port"`
 		Origin      string `json:"origin"`
-		Communities string `json:"community"`
+		Communities string `json:"communities"`
 		Extcomms    string `json:"extcomms"`
 	}
 }
@@ -162,9 +162,11 @@ Examples:
 
 const (
 	//CONFIG_FILE is config-file
-	CONFIG_FILE = "config.tml"
+	//CONFIG_FILE = "config.tml"
+	CONFIG_FILE = "/godev/jgob/jgob/config.tml"
 	//ROUTE_FILE is rib in file format
-	ROUTE_FILE = "jgob.route"
+	//ROUTE_FILE = "jgob.route"
+	ROUTE_FILE = "/godev/jgob/jgob/jgob.route"
 	//DEFAULT_TIMEOUT is Between the API communication
 	DEFAULT_TIMEOUT = 2000
 	//FLAG_FALSE_ROW is false flag row string
@@ -498,7 +500,7 @@ func main() {
 		ErrorLog: log.New(w, "", 0),
 		Handler:  httpLogger.WriteLog(http.DefaultServeMux, accessFile),
 	}
-	l.Fatal(srv.ListenAndServeTLS("ssl/development/myself.crt", "ssl/development/myself.key"))
+	l.Fatal(srv.ListenAndServeTLS("/godev/jgob/jgob/ssl/development/myself.crt", "/godev/jgob/jgob/ssl/development/myself.key"))
 }
 
 func addog(text string, filename string) {
@@ -517,7 +519,7 @@ func addog(text string, filename string) {
 
 // EnvLoad is dotenv func
 func EnvLoad() {
-	err := godotenv.Load()
+	err := godotenv.Load("/godev/jgob/jgob/.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 

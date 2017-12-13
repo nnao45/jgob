@@ -17,6 +17,7 @@ import (
 	"log/syslog"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -189,6 +190,8 @@ func main() {
 	schan := make(chan string)
 	rchan := make(chan string)
 
+	memStats := new(runtime.MemStats)
+
 	go jgobServer(achan, schan, rchan)
 
 	l := logrus.New()
@@ -227,6 +230,37 @@ func main() {
 			RemarkMap["flag"] = true
 			json, err := json.Marshal(RemarkMap)
 			if err != nil {
+				RemarkMap["flag"] = false
+				l.Error(err)
+			}
+			str := fmt.Sprintf("[%s]", string(json))
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length", strconv.Itoa(len(str)))
+			w.Write([]byte(str))
+		}
+	})
+
+	rtr.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
+		if checkAuth(r) == false {
+			w.Header().Set("WWW-Authenticate", `Basic realm="JGOB REALM"`)
+			w.WriteHeader(401)
+			w.Write([]byte("401 Unauthorized\n"))
+		} else {
+			runtime.ReadMemStats(memStats)
+			debugMap := map[string]interface{}{
+				"flag":         true,
+				"numGroutine":  runtime.NumGoroutine(),
+				"systemMemory": memStats.Sys,
+				"systemFrees":  memStats.Frees,
+				"systemAlloc":  memStats.TotalAlloc,
+				"heapSys":      memStats.HeapSys,
+				"heapAlloc":    memStats.HeapAlloc,
+				"heapIdle":     memStats.HeapIdle,
+				"heapReleased": memStats.HeapReleased,
+			}
+			json, err := json.Marshal(debugMap)
+			if err != nil {
+				debugMap["flag"] = false
 				l.Error(err)
 			}
 			str := fmt.Sprintf("[%s]", string(json))

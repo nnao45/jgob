@@ -21,6 +21,7 @@ import (
 	//"strconv"
 	"encoding/json"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -61,7 +62,6 @@ func cat(filename string) string {
 
 func dog(text string, filename string) {
 	if !exists(filename) {
-		//os.MkdirAll(GOBGPHOME, 0600)
 		os.Create(filename)
 	}
 
@@ -75,13 +75,6 @@ func dog(text string, filename string) {
 func jgobServer(achan chan []string, schan, rchan chan string) {
 	EnvLoad()
 
-	//log.SetLevel(log.DebugLevel)
-	//gobgpdLogFile, err := os.OpenFile("gobgpd.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	//if err != nil {
-	//      panic(err)
-	//}
-	//log.SetFormatter(&log.TextFormatter{FullTimestamp: true, DisableColors: true})
-	//log.SetOutput(gobgpdLogFile)
 	log.SetOutput(ioutil.Discard)
 
 	if err := addSyslogHook(":syslog", "syslog"); err != nil {
@@ -98,7 +91,6 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 
 	// loading config file
 	var jgobconfig TmlConfig
-	//_, err := toml.DecodeFile(*configFile, &jgobconfig)
 	_, err := toml.DecodeFile(*configFile, &jgobconfig)
 	if err != nil {
 		log.Fatal(err)
@@ -147,16 +139,6 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 		}
 	}
 
-	lock := make(chan struct{}, 0)
-	auto := make(chan struct{}, 0)
-	defer close(lock)
-	defer close(auto)
-
-	go func() {
-		reloadingRib(lock)
-		auto <- struct{}{}
-	}()
-
 	timeout := grpc.WithTimeout(time.Second)
 	conn, rpcErr := grpc.Dial("localhost:50051", timeout, grpc.WithBlock(), grpc.WithInsecure())
 	if rpcErr != nil {
@@ -166,7 +148,16 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 	}
 	client := api.NewGobgpApiClient(conn)
 
-	var count int
+	var once sync.Once
+	initRib := func() {
+		go func() {
+			reloadingRib()
+			for {
+				writeFilefromRib(client)
+				time.Sleep(24 * time.Hour)
+			}
+		}()
+	}
 	RemarkMap = map[string]interface{}{}
 	for {
 		select {
@@ -269,22 +260,10 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 				}
 				rchan <- conf
 			case "reload":
-				go reloadingRib(lock)
-				lock <- struct{}{}
+				reloadingRib()
 			}
 		default:
-			if count == 0 {
-				count++
-				lock <- struct{}{}
-				go func() {
-					<-auto
-					for {
-						writeFilefromRib(client)
-						//setKeyFromRib(client)
-						time.Sleep(24 * time.Hour)
-					}
-				}()
-			}
+			once.Do(initRib)
 		}
 	}
 }
@@ -310,8 +289,9 @@ func setKeyFromRib(rclient *redis.Client) {
 	}
 }
 */
-func reloadingRib(lock chan struct{}) {
-	<-lock
+//func reloadingRib(lock chan struct{}) {
+//	<-lock
+func reloadingRib() {
 	log.Info("Starting Check the HTTP API...")
 	x := 0
 	for {

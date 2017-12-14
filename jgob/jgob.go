@@ -186,6 +186,8 @@ func init() {
 
 func main() {
 
+	timeStart := time.Now()
+
 	achan := make(chan []string)
 	schan := make(chan string)
 	rchan := make(chan string)
@@ -246,8 +248,10 @@ func main() {
 			w.WriteHeader(401)
 			w.Write([]byte("401 Unauthorized\n"))
 		} else {
+			timeNow := time.Now()
 			runtime.ReadMemStats(memStats)
 			debugMap := map[string]interface{}{
+				"totalRuntime": timeNow.Sub(timeStart).Seconds(),
 				"flag":         true,
 				"numGroutine":  runtime.NumGoroutine(),
 				"systemMemory": memStats.Sys,

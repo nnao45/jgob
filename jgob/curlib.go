@@ -11,7 +11,7 @@ import (
 )
 
 /*https://golang.org/pkg/net/http/#Client*/
-var client = &http.Client{
+var httpClient = &http.Client{
 	Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{
 			ServerName:         "net-gobgp",
@@ -44,7 +44,7 @@ func curlCheck(user, pass string) bool {
 
 	req = req.WithContext(ctx)
 
-	resp, err := client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return false
 	}
@@ -80,7 +80,7 @@ func curlPost(values url.Values, cmd, user, pass string) error {
 
 	req = req.WithContext(ctx)
 
-	resp, err := client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err
 	}

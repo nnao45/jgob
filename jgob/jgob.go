@@ -253,7 +253,7 @@ func main() {
 			debugMap := map[string]interface{}{
 				"totalRuntime": timeNow.Sub(timeStart).Seconds(),
 				"flag":         true,
-				"numGroutine":  runtime.NumGoroutine(),
+				"numGoroutine": runtime.NumGoroutine(),
 				"systemMemory": memStats.Sys,
 				"systemFrees":  memStats.Frees,
 				"systemAlloc":  memStats.TotalAlloc,

@@ -251,7 +251,7 @@ func main() {
 			timeNow := time.Now()
 			runtime.ReadMemStats(memStats)
 			debugMap := map[string]interface{}{
-				"totalRuntime": timeNow.Sub(timeStart).Seconds(),
+				"totalUptime":  timeNow.Sub(timeStart).Seconds(),
 				"flag":         true,
 				"numGoroutine": runtime.NumGoroutine(),
 				"systemMemory": memStats.Sys,

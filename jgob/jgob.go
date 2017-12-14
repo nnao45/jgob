@@ -546,7 +546,7 @@ func addog(text string, filename string) {
 	writer.Write(data)
 	writer.Flush()
 	if err != nil {
-		log.Fatal("Error loading " + filename + " file")
+		logrus.Fatal("Error loading " + filename + " file")
 	}
 	defer f.Close()
 }
@@ -555,7 +555,7 @@ func addog(text string, filename string) {
 func EnvLoad() {
 	err := godotenv.Load("/godev/jgob/jgob/.env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logrus.Fatal("Error loading .env file")
 
 	}
 }

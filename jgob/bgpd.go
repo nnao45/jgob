@@ -593,7 +593,8 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 
 		//nexthop = "[Nexthop:" + nexthop + "]"
 
-		age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+		//age := formatTimedelta(int64(now.Sub(p.GetTimestamp()).Seconds()))
+		age := fmt.Sprint(now.Sub(p.GetTimestamp()).Seconds())
 
 		age = `"age":"` + age + `",`
 
@@ -619,6 +620,7 @@ func showRouteToItem(pathList []*table.Path, isWriteRib bool) string {
 	return sum
 }
 
+/*
 func formatTimedelta(d int64) string {
 	u := uint64(d)
 	neg := d < 0
@@ -640,7 +642,7 @@ func formatTimedelta(d int64) string {
 	}
 	return s
 }
-
+*/
 func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 	var dumpResult string
 	NeighResp, err := client.GetNeighbor(context.Background(), &api.GetNeighborRequest{
@@ -660,7 +662,8 @@ func showBgpNeighbor(client api.GobgpApiClient) (string, error) {
 			if p.Info.BgpState == "BGP_FSM_ESTABLISHED" {
 				t = int64(p.Timers.State.Uptime)
 			}
-			timeStr = formatTimedelta(int64(now.Sub(time.Unix(int64(t), 0)).Seconds()))
+			//timeStr = formatTimedelta(int64(now.Sub(time.Unix(int64(t), 0)).Seconds()))
+			timeStr = fmt.Sprint(now.Sub(time.Unix(int64(t), 0)).Seconds())
 		}
 		timedelta = append(timedelta, timeStr)
 	}

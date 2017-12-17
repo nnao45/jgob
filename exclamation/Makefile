@@ -40,9 +40,7 @@ dep:
 	dep ensure
 
 dep-install:
-	ifeq ($(shell command -v dep 2> /dev/null),)
-		go get -u github.com/golang/dep/cmd/dep
-	endif
+	go get -u github.com/golang/dep/cmd/dep
 
 dist:
 	cd dist && \

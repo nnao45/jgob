@@ -9,47 +9,44 @@ SRCS	:= $(shell find . -type f -name '*.go')
 LDFLAGS := -ldflags="-s -w -X \"main.version=$(VERSION)\" -extldflags \"-static\""
 
 $(TARGET): $(SRCS)
-		go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o bin/$(NAME)
+		./makeTestConfig.sh
+		./makeSSL.sh
+		go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o $(NAME)
 
-.PHONY: install
-	install:
+.PHONY: install wash clean cross-build upde dep dep-install dist
+
+install:
 	go install $(LDFLAGS)
 
-.PHONY: wash
-	wash:
-		rm -rf bin/*
+wash:
+		rm -f jgob
+		rm -f jgob.route
+		rm -f conig.tml
+		rm -rf ssl/
 		rm -rf dist/*
 
-.PHONY: clean
-	clean:
-		rm -rf bin/*
+clean: wash
 		rm -rf vendor/*
-		rm -rf dist/*
 
-.PHONY: cross-build
-	cross-build: deps
+cross-build: deps
 		for os in darwin linux windows; do \
 				for arch in amd64 386; do \
 				GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o dist/$$os-$$arch/$(NAME); \
 				done; \
 		done
 
-.PHONY: upde
-	upde:
+upde:
 		dep ensure -update
 
-.PHONY: dep
-	dep:
+dep:
 		dep ensure
 
-.PHONY: glide
-	glide:
+dep-install:
 	ifeq ($(shell command -v dep 2> /dev/null),)
 		go get -u github.com/golang/dep/cmd/dep
 	endif
 
-.PHONY: dist
-	dist:
+dist:
 		cd dist && \
 			$(DIST_DIRS) cp ../LICENSE {} \; && \
 			$(DIST_DIRS) cp ../README.md {} \; && \

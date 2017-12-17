@@ -5,6 +5,7 @@ jgob/.env
 jgob/ssl/
 jgob/access_log
 jgob/config.tml
+jgob/jgob.route
 exclamation/.env
 exclamation/access_log
 exclamation/exclamation

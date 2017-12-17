@@ -151,6 +151,8 @@ func (p *Prefix) addUUID(res string) string {
 
 var configFile = flag.String("f", CONFIG_FILE, "")
 var routeFile = flag.String("r", ROUTE_FILE, "")
+var ver = flag.Bool("v", false, "")
+var version string
 var usage = `
 Usage:
     jgob_IPv4Flowspec [-r route-file] [-f config-file]
@@ -180,6 +182,11 @@ func init() {
 	}
 
 	flag.Parse()
+
+	if *ver {
+		fmt.Println("jgob version: ", version)
+		os.Exit(0)
+	}
 }
 
 func main() {

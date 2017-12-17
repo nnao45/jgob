@@ -72,7 +72,7 @@ func dog(text string, filename string) {
 	}
 }
 
-func jgobServer(achan chan []string, schan, rchan chan string) {
+func bgpdServer(achan chan []string, schan, rchan chan string) {
 	EnvLoad()
 
 	log.SetOutput(ioutil.Discard)

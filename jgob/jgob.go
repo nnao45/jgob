@@ -180,7 +180,6 @@ func init() {
 	}
 
 	flag.Parse()
-
 }
 
 func main() {
@@ -193,7 +192,7 @@ func main() {
 
 	memStats := new(runtime.MemStats)
 
-	go jgobServer(achan, schan, rchan)
+	go bgpdServer(achan, schan, rchan)
 
 	l := logrus.New()
 	l.Out = ioutil.Discard

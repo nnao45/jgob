@@ -1,7 +1,7 @@
 GO15VENDOREXPERIMENT=1
 
 NAME	 := jgob
-TARGET	 := bin/$(NAME)
+TARGET	 := $(NAME)
 VERSION  := beta
 DIST_DIRS := find * -type d -exec
 

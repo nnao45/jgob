@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/ajays20078/go-http-logger"
 	"github.com/codeskyblue/go-sh"
 	"github.com/gorilla/mux"
@@ -14,6 +16,18 @@ import (
 	"os"
 	"strconv"
 )
+
+var ver = flag.Bool("v", false, "")
+var version string
+
+func init() {
+	flag.Parse()
+
+	if *ver {
+		fmt.Println("jgob version: ", version)
+		os.Exit(0)
+	}
+}
 
 func main() {
 
@@ -96,7 +110,7 @@ func main() {
 func EnvLoad() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logrus.Fatal("Error loading .env file")
 
 	}
 }

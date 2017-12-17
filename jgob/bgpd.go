@@ -30,17 +30,17 @@ var RemarkMap map[string]interface{}
 
 // TmlConfig is toml forat config-file
 type TmlConfig struct {
-	JgobConfig JgobConfig
+	BgpdConfig BgpdConfig
 }
 
-// JgobConfig is parsed from TmlConfig
-type JgobConfig struct {
+// BgpdConfig is parsed from TmlConfig
+type BgpdConfig struct {
 	As             uint32           `toml:"as"`
 	RouterID       string           `toml:"router-id"`
 	NeighborConfig []NeighborConfig `toml:"neighbor-config"`
 }
 
-// NeighborConfig is JgobConfig's struct
+// NeighborConfig is BgpdConfig's struct
 type NeighborConfig struct {
 	PeerAs          uint32 `toml:"peer-as"`
 	NeighborAddress string `toml:"neighbor-address"`
@@ -90,8 +90,8 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 	go g.Serve()
 
 	// loading config file
-	var jgobconfig TmlConfig
-	_, err := toml.DecodeFile(*configFile, &jgobconfig)
+	var bgpdconfig TmlConfig
+	_, err := toml.DecodeFile(*configFile, &bgpdconfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -99,8 +99,8 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 	// global configuration
 	global := &config.Global{
 		Config: config.GlobalConfig{
-			As:       jgobconfig.JgobConfig.As,
-			RouterId: jgobconfig.JgobConfig.RouterID,
+			As:       bgpdconfig.BgpdConfig.As,
+			RouterId: bgpdconfig.BgpdConfig.RouterID,
 			Port:     -1, // gobgp won't listen on tcp:179
 		},
 	}
@@ -111,7 +111,7 @@ func jgobServer(achan chan []string, schan, rchan chan string) {
 
 	// neighbor configuration
 
-	for _, v := range jgobconfig.JgobConfig.NeighborConfig {
+	for _, v := range bgpdconfig.BgpdConfig.NeighborConfig {
 		peertype := config.PEER_TYPE_INTERNAL
 		if v.PeerType == "internal" {
 			peertype = config.PEER_TYPE_INTERNAL

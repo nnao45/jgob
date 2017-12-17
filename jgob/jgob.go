@@ -163,11 +163,9 @@ Examples:
 
 const (
 	//CONFIG_FILE is config-file
-	//CONFIG_FILE = "config.tml"
-	CONFIG_FILE = "/godev/jgob/jgob/config.tml"
+	CONFIG_FILE = "./config.tml"
 	//ROUTE_FILE is rib in file format
-	//ROUTE_FILE = "jgob.route"
-	ROUTE_FILE = "/godev/jgob/jgob/jgob.route"
+	ROUTE_FILE = "./jgob.route"
 	//DEFAULT_TIMEOUT is Between the API communication
 	DEFAULT_TIMEOUT = 2000
 	//FLAG_FALSE_ROW is false flag row string
@@ -182,6 +180,7 @@ func init() {
 	}
 
 	flag.Parse()
+
 }
 
 func main() {
@@ -538,7 +537,7 @@ func main() {
 		ErrorLog: log.New(w, "", 0),
 		Handler:  httpLogger.WriteLog(http.DefaultServeMux, accessFile),
 	}
-	l.Fatal(srv.ListenAndServeTLS("/godev/jgob/jgob/ssl/development/myself.crt", "/godev/jgob/jgob/ssl/development/myself.key"))
+	l.Fatal(srv.ListenAndServeTLS("./ssl/development/myself.crt", "./ssl/development/myself.key"))
 }
 
 func addog(text string, filename string) {
@@ -557,7 +556,7 @@ func addog(text string, filename string) {
 
 // EnvLoad is dotenv func
 func EnvLoad() {
-	err := godotenv.Load("/godev/jgob/jgob/.env")
+	err := godotenv.Load("./.env")
 	if err != nil {
 		logrus.Fatal("Error loading .env file")
 

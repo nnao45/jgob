@@ -13,7 +13,11 @@ $(TARGET): $(SRCS)
 	./makeSSL.sh
 	go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o $(NAME)
 
-.PHONY: install wash clean cross-build upde dep dep-install dist
+.PHONY: test install wash clean cross-build upde dep dep-install dist
+
+testfile:
+	./makeSSL.sh
+	./makeTestConfig.sh	
 
 install:
 	go install $(LDFLAGS)

@@ -1,11 +1,11 @@
 #!/bin/sh
 
 cat << EOT > config.tml
-[jgobconfig]
+[bgpdconfig]
 as = 65501
 router-id = "10.0.0.1"
 
-[[jgobconfig.neighbor-config]]
+[[bgpdconfig.neighbor-config]]
 peer-as = 65501
 neighbor-address = "10.0.0.2"
 peer-type = "internal"

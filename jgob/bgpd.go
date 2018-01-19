@@ -124,6 +124,12 @@ func bgpdServer(achan chan []string, schan, rchan chan string) {
 				PeerAs:          v.PeerAs,
 				PeerType:        peertype,
 			},
+			EbgpMultihop: config.EbgpMultihop{
+				Config: config.EbgpMultihopConfig{
+					Enabled:     true,
+					MultihopTtl: 255,
+				},
+			},
 			AfiSafis: []config.AfiSafi{
 				{
 					Config: config.AfiSafiConfig{
